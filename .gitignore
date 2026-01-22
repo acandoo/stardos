@@ -2,3 +2,7 @@
 *.ez
 /build
 erl_crash.dump
+node_modules
+
+# ignored because mjs is generated from typescript
+src/**/*.mjs

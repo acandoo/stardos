@@ -1,0 +1,27 @@
+{
+  "name": "stardos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "gleam test -t javascript && gleam test -t erlang",
+    "build": "pnpm run build:javascript && pnpm run build:erlang",
+    "build:javascript": "node ./scripts/build-ffi.mjs && gleam build -t javascript",
+    "build:erlang": "gleam build -t erlang",
+    "watch": "node ./scripts/watch.mjs"
+  },
+  "keywords": [],
+  "author": "acandoo",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.28.1",
+  "devDependencies": {
+    "@types/bun": "^1.3.6",
+    "@types/deno": "^2.5.0",
+    "@types/node": "^25.0.9",
+    "esbuild": "^0.27.2",
+    "glob": "^13.0.0",
+    "typescript": "^5.9.3"
+  }
+}
