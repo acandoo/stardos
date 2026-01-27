@@ -50,7 +50,7 @@ export function program(): string {
   }
 
   // since this function cannot error we return an empty string otherwise
-  return ''
+  return globalThis.document?.location?.toString() ?? ''
 }
 
 export function args(): List {
