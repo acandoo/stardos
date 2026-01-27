@@ -28,7 +28,7 @@ export function runtime(): JavaScript {
 
   // Extra work is done to check for Node since other environments
   // (like Bun) also define `globalThis.process`.
-  if (process?.release?.name === 'node') {
+  if (globalThis.process?.release?.name === 'node') {
     const nodePath = process.execPath
     return Runtime$JavaScript(JavaScriptRuntime$Node(nodePath))
   }
@@ -45,7 +45,7 @@ export function program(): string {
 
   // note to self: see [github pr in argv](https://github.com/lpil/argv/pull/4/files)
   // can be improved
-  if (globalThis.process) {
+  if (globalThis.process?.argv) {
     return process.argv[1]
   }
 
