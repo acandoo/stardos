@@ -5,6 +5,9 @@ const projectName = 'stardos'
 const baseDir = 'src'
 const files = globSync(`${baseDir}/**/*.ts`)
 
+/**
+ * @type {import('esbuild').BuildOptions}
+ */
 export const buildOptions = {
   entryPoints: files,
   outdir: baseDir,
@@ -34,7 +37,10 @@ export const buildOptions = {
             fullPath = path.resolve('src/gleam.mjs')
           }
 
-          const relPath = path.relative(resolveDir, fullPath)
+          let relPath = path.relative(resolveDir, fullPath)
+          if (!relPath.startsWith('.')) {
+            relPath = `./${relPath}`
+          }
           return {
             path: relPath.replace(/\\/g, '/'),
             external: true
