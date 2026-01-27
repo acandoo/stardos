@@ -21,7 +21,28 @@ pub type Future(result)
 
 /// Creates a new Future that will execute the provided computation
 /// when the Future is spawned in a Task by a runtime. In all likelihood
-/// you shouldn't use this function directly, as 
+/// you shouldn't use this function directly, as the main utility of this
+/// function is to appease the type system in certain scenarios.
+///  
+/// ## Examples
+/// 
+/// Create a Future that produces `Nil`:
+/// 
+/// ```gleam
+/// future.new(fn() { Nil })
+/// // -> Future(Nil)
+/// ```
+/// 
+/// Run a blocking computation in a Future (This does NOT make it
+/// non-blocking on JavaScript!):
+/// 
+/// ```gleam
+/// future.new(fn() {
+///   io.println("Hello, Lucy!")
+/// })
+/// // -> Future(Nil)
+/// ```
+/// 
 @external(javascript, "./future_ffi.mjs", "newFuture")
 pub fn new(compute: fn() -> result) -> Future(result)
 
@@ -30,8 +51,30 @@ pub fn new(compute: fn() -> result) -> Future(result)
 ///  
 /// ## Examples
 /// 
+/// Use `await` to get the result of a Future:
+/// 
 /// ```gleam
-/// use 
+/// let my_future = future.new(fn() { 42 })
+/// let result_future = future.await(my_future, fn(value) {
+///   value + 1
+/// })
+/// // -> Future(Int)
+/// ```
+/// 
+/// Use `use` syntax to await without indentation:
+/// 
+/// ```gleam
+/// let my_future = future.new(fn() { 42 })
+/// let my_other_future = future.new(fn() { "Lucy" })
+/// 
+/// // Note that my_other_future will only be scheduled *after*
+/// // my_future completes, since we are awaiting it first.
+/// use value <- future.await(my_future)
+/// use other_value <- future.await(my_other_future)
+/// value + 1
+/// // -> Future(Future(Int))
+/// ```
+///
 @external(javascript, "./future_ffi.mjs", "awaitFuture")
 pub fn await(
   future prev: Future(result),
