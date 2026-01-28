@@ -1,4 +1,6 @@
 import { type Future } from './future_ffi'
+import { type Result, Result$Error, Result$Ok } from 'gleam'
+import { AbortableTaskError$Unsupported } from 'gleam:@stardos/stardos/concurrent/task'
 
 type Task = {
   // Unique identifier for the task, used to prevent equality between tasks.
@@ -16,7 +18,9 @@ export function spawnTask(future: Future<any>): Task {
   }
 }
 
-export function spawnAbortableTask(future: Future<any>): AbortableTask {
+export function spawnAbortableTask(future: Future<any>): Result {
+  if (!globalThis.AbortController)
+    return Result$Error(AbortableTaskError$Unsupported())
   const abortController = new AbortController()
   const { signal } = abortController
 
@@ -29,10 +33,10 @@ export function spawnAbortableTask(future: Future<any>): AbortableTask {
     future.execute().then(resolve)
   })
 
-  return {
+  return Result$Ok({
     taskId: Symbol(),
     abortController
-  }
+  } as AbortableTask)
 }
 
 export function abortTask(task: AbortableTask): void {
