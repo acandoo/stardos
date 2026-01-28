@@ -12,7 +12,7 @@ type AbortableTask = Task & {
 }
 
 export function spawnTask(future: Future<any>): Task {
-  future.execute()
+  future()
   return {
     taskId: Symbol()
   }
@@ -30,7 +30,7 @@ export function spawnAbortableTask(future: Future<any>): Result {
     signal.addEventListener('abort', () => {
       reject(new Error('Task aborted'))
     })
-    future.execute().then(resolve)
+    future().then(resolve)
   })
 
   return Result$Ok({
