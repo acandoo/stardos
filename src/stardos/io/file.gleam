@@ -5,6 +5,17 @@ import stardos/io.{type IoError, type IoPermissions, type WriteMode}
 
 pub type FileHandle
 
+pub type FileRef {
+  FilePath(path: String)
+  Fd(path: String)
+}
+
+pub type ExistMode {
+  MustExist
+  MustNotExist
+  CreateIfNotExist(truncate: Bool)
+}
+
 // In order to keep the function signatures and types simple, there are different functions for opening
 // files that have subtle differences on truncating and creating the file.
 
@@ -24,20 +35,10 @@ pub type FileHandle
 /// }
 /// ```
 @external(javascript, "./file_ffi.mjs", "atPath")
-pub fn at_path(
-  path: String,
-  given permissions: IoPermissions,
-  then callback: fn(Result(FileHandle, IoError)) -> Nil,
-) -> Nil
-
-/// Opens the file at the specified path. If the file does not exist, a new one is created.
-/// 
-/// If you want an exception to occur with no file, use `file.at_path()`.
-/// If you want the file to be created *and* overwrite any existing data, use `file.new()`.
-@external(javascript, "./file_ffi.mjs", "open")
 pub fn open(
-  path: String,
+  from ref: FileRef,
   given permissions: IoPermissions,
+  on_exist exist_mode: ExistMode,
   then callback: fn(Result(FileHandle, IoError)) -> Nil,
 ) -> Nil
 
@@ -61,12 +62,16 @@ pub fn write(
   then callback: fn(Result(Nil, IoError)) -> Nil,
 ) -> Nil
 
-pub fn write_over_file(
+pub fn overwrite(
   in path: String,
   with data: BitArray,
   then callback: fn(Result(Nil, IoError)) -> Nil,
 ) -> Nil {
-  use file <- at_path(path, io.WriteOnly(io.Absolute))
+  use file <- open(
+    FilePath(path),
+    io.WriteOnly(io.Absolute),
+    CreateIfNotExist(truncate: False),
+  )
   case file {
     Ok(a) -> write(to: a, with: data, at: option.None, then: callback)
     Error(a) -> callback(Error(a))
