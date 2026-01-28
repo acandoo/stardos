@@ -12,7 +12,12 @@ type AbortableTask = Task & {
 }
 
 export function spawnTask(future: Future<any>): Task {
-  future()
+  // Note: we want the event loop to stay while the Promise is running,
+  // so a setInterval is used to keep it alive.
+  new Promise(() => {
+    const interval = setInterval(() => {})
+    future().finally(() => clearInterval(interval))
+  })
   return {
     taskId: Symbol()
   }
