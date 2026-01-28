@@ -91,7 +91,7 @@ pub fn join(
   future2: Future(result2),
 ) -> Future(#(result1, result2))
 
-/// Unwraps a double nested Future, flattening it into a single Future.
+/// Flattens a double nested Future into a single Future.
 /// This often occurs after multiple `await` calls.
-@external(javascript, "./future_ffi.mjs", "unwrapFuture")
-pub fn unwrap(future: Future(Future(result))) -> Future(result)
+@external(javascript, "./future_ffi.mjs", "flattenFuture")
+pub fn flatten(future: Future(Future(result))) -> Future(result)

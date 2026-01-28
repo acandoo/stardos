@@ -35,7 +35,7 @@ export function joinFutures<Result1, Result2>(
   }
 }
 
-export function unwrapFuture<Result>(
+export function flattenFuture<Result>(
   future: Future<Future<Result>>
 ): Future<Result> {
   return {
