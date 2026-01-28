@@ -21,17 +21,15 @@ pub fn subscribe(
   to stream: FutureStream(a),
   then cb: fn(a) -> Nil,
 ) -> Future(Nil) {
-  future.unwrap({
-    use val <- future.await(stream.next())
-    case val {
-      Next(item, rest) -> {
-        cb(item)
-        subscribe(to: rest, then: cb)
-      }
-      Last(item) -> {
-        cb(item)
-        future.new(fn() { Nil })
-      }
+  use val <- future.flat_await(stream.next())
+  case val {
+    Next(item, rest) -> {
+      cb(item)
+      subscribe(to: rest, then: cb)
     }
-  })
+    Last(item) -> {
+      cb(item)
+      future.new(fn() { Nil })
+    }
+  }
 }

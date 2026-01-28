@@ -95,3 +95,42 @@ pub fn join(
 /// This often occurs after multiple `await` calls.
 @external(javascript, "./future_ffi.mjs", "flattenFuture")
 pub fn flatten(future: Future(Future(result))) -> Future(result)
+
+pub fn flat_await(
+  future: Future(result),
+  then cb: fn(result) -> Future(new),
+) -> Future(new) {
+  flatten(await(future, fn(value) { cb(value) }))
+}
+// fn testing_fn() {
+//   let f1 = new(fn() { 1 })
+//   let f2 = new(fn() { 2 })
+//   let f3 = new(fn() { 3 })
+//   let f4 = new(fn() { 4 })
+//   let f5 = new(fn() { 5 })
+//   let f6 = new(fn() { 6 })
+//   let f7 = new(fn() { 7 })
+//   let f8 = new(fn() { 8 })
+
+//   let joined =
+//     f1
+//     |> join(f2)
+//     |> join(f3)
+//     |> join(f4)
+//   let joined2 =
+//     f5
+//     |> join(f6)
+//     |> join(f7)
+//     |> join(f8)
+//   use #(#(#(a, b), c), d) <- flat_await(joined)
+//   let result1 = a + b + c + d
+//   use #(#(#(e, f), g), h) <- await(joined2)
+//   let result2 = e + f + g + h
+//   result1 + result2
+//   // is it better to do flat_await or future.return + await as flat_await?
+//   // use #(#(#(a, b), c), d) <- future.await(joined)
+//   // let result1 = a + b + c + d
+//   // use #(#(#(e, f), g), h) <- future.await(joined2)
+//   // let result2 = e + f + g + h
+//   // future.return(result1 + result2)
+// }
