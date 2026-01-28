@@ -1,3 +1,5 @@
+import { List } from 'gleam'
+
 export type Future<Result> = {
   execute: () => Promise<Result>
 }
@@ -31,6 +33,17 @@ export function joinFutures<Result1, Result2>(
         future2.execute()
       ])
       return [result1, result2]
+    }
+  }
+}
+
+export function allFutures(futures: List): Future<List> {
+  return {
+    execute: async () => {
+      const result = await Promise.all(
+        futures.toArray().map((fut: Future<any>) => fut.execute())
+      )
+      return List.fromArray(result)
     }
   }
 }
