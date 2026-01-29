@@ -8,13 +8,17 @@ export function newFuture<Result>(compute: () => Result): Future<Result> {
   return async () => compute()
 }
 
+export function resolveFuture<Result>(input: Result): Future<Result> {
+  return async () => input
+}
+
 export function awaitFuture<NewResult, PrevResult>(
   future: Future<PrevResult>,
-  cb: (PrevResult) => NewResult
+  cb: (PrevResult) => Future<NewResult>
 ): Future<NewResult> {
   return async () => {
     const result = await future()
-    return cb(result)
+    return await cb(result)()
   }
 }
 
@@ -28,7 +32,16 @@ export function joinFutures<Result1, Result2>(
       future2()
     ])
     return [result1, result2]
+  }
+}
 
+export function firstFuture<T>(
+  futures: List
+): Future<T> {
+  return async () => {
+    return await Promise.race(
+      futures.toArray().map((fut: Future<T>) => fut())
+    )
   }
 }
 
@@ -39,7 +52,6 @@ export function allFutures(futures: List): Future<List> {
     )
     return List.fromArray(result)
   }
-
 }
 
 export function flattenFuture<Result>(
@@ -47,7 +59,6 @@ export function flattenFuture<Result>(
 ): Future<Result> {
   return async () => {
     const innerFuture = await future()
-    return innerFuture()
+    return await innerFuture()
   }
-
 }

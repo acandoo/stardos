@@ -21,7 +21,7 @@ pub fn subscribe(
   to stream: FutureStream(a),
   then cb: fn(a) -> Nil,
 ) -> Future(Nil) {
-  use val <- future.flat_await(stream.next())
+  use val <- future.await(stream.next())
   case val {
     Next(item, rest) -> {
       cb(item)
@@ -29,7 +29,7 @@ pub fn subscribe(
     }
     Last(item) -> {
       cb(item)
-      future.new(fn() { Nil })
+      future.resolve(Nil)
     }
   }
 }
