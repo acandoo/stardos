@@ -7,9 +7,9 @@
 //// Note that, unlike JavaScript Promises, Gleam futures are *inert*,
 //// meaning they do not start executing until explicitly spawned in a Task
 //// by a runtime. This is somewhat unlike Rust Futures, which can be `await`ed
-//// directly in an async main function. This distinction is due to Gleam's
-//// fundamentally synchronous execution model and the requirements of the Erlang
-//// and JavaScript runtimes.
+//// directly in an async main function (though with the aid of a macro).
+//// This distinction is due to Gleam's fundamentally synchronous execution
+//// model and the requirements of the Erlang and JavaScript runtimes.
 
 /// A Future represents an asynchronous operation that will
 /// eventually produce a result of type `result`. It may depend
