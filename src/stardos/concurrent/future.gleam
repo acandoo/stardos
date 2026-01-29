@@ -98,12 +98,11 @@ pub fn join(
 /// when all input Futures have resolved. When spawned, the inner
 /// futures will be executed concurrently, and the resulting Future
 /// will contain a list with the results of all Futures.
-@external(javascript, "./future_ffi.mjs", "joinFutures")
+@external(javascript, "./future_ffi.mjs", "allFutures")
 pub fn all(futures: List(Future(result))) -> Future(List(result))
 
 @external(javascript, "./future_ffi.mjs", "firstFuture")
 pub fn first(futures: List(Future(result))) -> Future(result)
-
 
 /// Flattens a double nested Future into a single Future.
 /// This often occurs after multiple `await` calls.
