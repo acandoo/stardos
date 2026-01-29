@@ -17,6 +17,14 @@ pub type Step(a) {
   Last(a)
 }
 
+// note: there is a problem with timing sensitive applications
+// since control over the scheduling is blocked by the callback.
+// futures are not eager, so timing issues may arise
+// though i'm not 100% sure, i'll have to look into it more later
+
+/// Subscribes to a FutureStream, invoking the provided callback
+/// function for each item produced by the stream. The subscription
+/// continues until the stream produces its last item.
 pub fn subscribe(
   to stream: FutureStream(a),
   then cb: fn(a) -> Nil,
