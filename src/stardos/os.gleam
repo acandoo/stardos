@@ -1,8 +1,6 @@
 //// The `os` module provides operating system-level
 //// functioality, such as retrieving platform information.
 
-import stardos/internal/os_platform
-
 /// The platform the program is running on.
 /// Note that the efficacy of this function depends on
 /// the underlying runtime's ability to accurately
