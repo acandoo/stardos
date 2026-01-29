@@ -4,6 +4,8 @@
 //// the current working directory.
 
 import gleam/dict.{type Dict}
+import gleam/result
+import stardos/os
 
 pub type Runtime {
   Erlang(path: String)
@@ -80,8 +82,23 @@ pub fn cwd() -> Result(String, Nil)
 @external(javascript, "./env_ffi.mjs", "setCwd")
 pub fn set_cwd(path: String) -> Result(Nil, Nil)
 
-@external(javascript, "./env_ffi.mjs", "homeDir")
-pub fn home_dir() -> Result(String, Nil)
+/// Retrieves the home directory path for the current user.
+/// TODO improve implementation to match Node's `os.homedir()`
+pub fn home_dir() -> Result(String, Nil) {
+  case os.platform() {
+    os.Win32 -> var("USERPROFILE")
+    _ -> var("HOME")
+  }
+}
 
-@external(javascript, "./env_ffi.mjs", "tempDir")
-pub fn temp_dir() -> String
+/// Retrieves the path to the system's temporary directory.
+/// TODO improve implementation to match Node's `os.tmpdir()`
+pub fn temp_dir() -> String {
+  let assert Ok(dir) = {
+    use _ <- result.try_recover(var("TMPDIR"))
+    use _ <- result.try_recover(var("TMP"))
+    use _ <- result.try_recover(var("TEMP"))
+    Ok("/tmp")
+  }
+  dir
+}

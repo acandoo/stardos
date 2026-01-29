@@ -103,7 +103,8 @@ export function setVar(key: string, value: string): void {
 }
 
 export function getVars() {
-  const envEntries = Object.entries(process.env ?? {})
+  const env = globalThis.process?.env ?? globalThis.Deno?.env.toObject() ?? {}
+  const envEntries = Object.entries(env)
   const dict = Dict.from_list(List.fromArray(envEntries))
 
   return dict
@@ -115,5 +116,31 @@ export function removeVar(key: string): void {
   }
   if (globalThis.process) {
     delete process.env[key]
+  }
+}
+
+export function cwd(): Result {
+  if (globalThis.Deno) {
+    return Result$Ok(Deno.cwd())
+  }
+  if (globalThis.process) {
+    return Result$Ok(process.cwd())
+  }
+  return Result$Error()
+}
+
+export function setCwd(path: string): Result {
+  // flatten into a single try-catch
+  try {
+    if (globalThis.Deno) {
+      Deno.chdir(path)
+      return Result$Ok()
+    }
+    if (globalThis.process) {
+      process.chdir(path)
+      return Result$Ok()
+    }
+  } finally {
+    return Result$Error()
   }
 }
