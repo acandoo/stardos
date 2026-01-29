@@ -1,6 +1,8 @@
 //// The `os` module provides operating system-level
 //// functioality, such as retrieving platform information.
 
+import stardos/internal/os_platform
+
 /// The platform the program is running on.
 /// Note that the efficacy of this function depends on
 /// the underlying runtime's ability to accurately
@@ -48,5 +50,21 @@ pub type Platform {
 /// }
 /// ```
 ///
+pub fn platform() -> Platform {
+  case platform_string() {
+    "aix" -> Aix
+    "android" -> Android
+    "darwin" -> Darwin
+    "freebsd" -> FreeBsd
+    "illumos" -> Illumos
+    "linux" -> Linux
+    "netbsd" -> NetBsd
+    "openbsd" -> OpenBsd
+    "sunos" -> SunOs
+    "win32" -> Win32
+    _ -> Unknown
+  }
+}
+
 @external(javascript, "./os_ffi.mjs", "platform")
-pub fn platform() -> Platform
+fn platform_string() -> String
