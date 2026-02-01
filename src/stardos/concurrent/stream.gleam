@@ -35,8 +35,6 @@ pub fn subscribe(
       cb(item)
       subscribe(to: stream, then: cb)
     }
-    Last -> {
-      future.resolve(Nil)
-    }
+    Last -> future.resolve(Nil)
   }
 }
