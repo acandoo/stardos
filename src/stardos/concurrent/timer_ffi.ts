@@ -2,22 +2,41 @@ import { to_milliseconds } from 'gleam:@gleam_time/gleam/time/duration'
 import { type Future } from './future_ffi'
 import {
   type FutureStream,
-  FutureStream$FutureStream
+  type Next,
+  FutureStream$FutureStream,
+  Step$Next
 } from 'gleam:@stardos/stardos/concurrent/stream'
 
 export function sleep(duration): Future<undefined> {
-  return () =>
-    new Promise((res) =>
-      setTimeout(() => res(undefined), to_milliseconds(duration))
-    )
+  let timer: NodeJS.Timeout
+  return {
+    execute: () =>
+      new Promise((res) => {
+        timer = setTimeout(() => res(undefined), to_milliseconds(duration))
+      }),
+    cleanup: () => clearTimeout(timer)
+  }
 }
 
 // todo figure out how to solve timing issue
 export function interval(duration): FutureStream {
-  return FutureStream$FutureStream(
-    () =>
-      new Promise((res) =>
-        setTimeout(() => res(undefined), to_milliseconds(duration))
-      )
-  )
+  const durationMs = to_milliseconds(duration)
+  return FutureStream$FutureStream(() => {
+    // The input callback to the FutureStream constructor executes
+    // immediately and is not deferred until the FutureStream is awaited,
+    // so the timer has to be created inside the execute function.
+    let intervalTimer: NodeJS.Timeout | number = 0
+    let timerCb: () => void
+    return {
+      execute: () =>
+        new Promise((res) => {
+          timerCb = () => {
+            res(Step$Next(undefined))
+          }
+          if (intervalTimer === 0)
+            intervalTimer = setInterval(timerCb, durationMs)
+        }),
+      cleanup: () => clearInterval(intervalTimer)
+    } as Future<Next>
+  })
 }

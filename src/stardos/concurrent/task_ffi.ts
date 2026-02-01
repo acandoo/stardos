@@ -13,10 +13,13 @@ type AbortableTask = Task & {
 
 export function spawnTask(future: Future<any>): Task {
   // Note: we want the event loop to stay while the Promise is running,
-  // so a setInterval is used to keep it alive.
+  // so the executor is wrapped and a setInterval is used to keep it alive.
   new Promise(() => {
     const interval = setInterval(() => {})
-    future().finally(() => clearInterval(interval))
+    future.execute().finally(() => {
+      clearInterval(interval)
+      future.cleanup?.()
+    })
   })
   return {
     taskId: Symbol()
@@ -31,11 +34,16 @@ export function spawnAbortableTask(future: Future<any>): Result {
 
   // Note: The future's computation should ideally check the signal
   // periodically to see if it has been aborted, and handle it accordingly.
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     signal.addEventListener('abort', () => {
+      future.cleanup?.()
+      console.log(future.cleanup?.toString())
       resolve(new Error('Task aborted'))
     })
-    future().then(resolve)
+    future.execute().finally(() => {
+      future.cleanup?.()
+      resolve(null)
+    })
   })
 
   return Result$Ok({
