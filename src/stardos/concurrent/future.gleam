@@ -59,7 +59,7 @@ pub fn resolve(input: result) -> Future(result)
 /// ```gleam
 /// let my_future = future.new(fn() { 42 })
 /// let result_future = future.await(my_future, fn(value) {
-///   value + 1
+///   future.resolve(value + 1)
 /// })
 /// // -> Future(Int)
 /// ```
@@ -74,9 +74,14 @@ pub fn resolve(input: result) -> Future(result)
 /// // my_future completes, since we are awaiting it first.
 /// use value <- future.await(my_future)
 /// use other_value <- future.await(my_other_future)
-/// value + 1
-/// // -> Future(Future(Int))
+/// future.resolve(value + 1)
+/// // -> Future(Int)
 /// ```
+/// 
+/// Awaiting a Future multiple times will re-execute it each time:
+/// 
+/// ```gleam
+/// 
 ///
 @external(javascript, "./future_ffi.mjs", "awaitFuture")
 pub fn await(
