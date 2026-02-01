@@ -8,6 +8,29 @@ import stardos/concurrent/future.{type Future}
 /// A FutureStream represents a stream of values of type `a`
 /// that are produced asynchronously. Each value is produced
 /// as a Future, allowing for non-blocking consumption of the stream.
+/// 
+/// Like Futures, FutureStreams are inert and do not start producing
+/// values until they are subscribed to in a Task spawned by a runtime.
+/// 
+/// ## Example
+///
+/// ```gleam
+/// pub fn main() -> Nil {
+///   // stream isn't started by this
+///   let my_stream: FutureStream(String) = stream_creator()
+/// 
+///   // subscribing produces a Future, so still inert
+///   let subscription = stream.subscribe(
+///     to: my_stream,
+///     then: io.println,
+///   )
+/// 
+///   // spawning the task starts the stream
+///   task.spawn(subscription)
+///   Nil
+/// }
+/// ```
+/// 
 pub type FutureStream(a) {
   FutureStream(next: fn() -> Future(Step(a)))
 }
