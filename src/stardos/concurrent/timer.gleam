@@ -9,7 +9,7 @@ pub fn sleep(duration: Duration) -> Future(Nil)
 pub fn interval(duration: Duration) -> FutureStream(Nil) {
   stream.FutureStream(next: fn() {
     use _ <- future.await(sleep(duration))
-    future.resolve(stream.Next(Nil, interval(duration)))
+    future.resolve(stream.Next(Nil))
   })
 }
 // TODO should there be better way of aborting besides AbortableTasks?

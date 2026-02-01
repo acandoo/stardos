@@ -13,8 +13,8 @@ pub type FutureStream(a) {
 }
 
 pub type Step(a) {
-  Next(a, FutureStream(a))
-  Last(a)
+  Next(a)
+  Last
 }
 
 // note: there is a problem with timing sensitive applications
@@ -31,12 +31,11 @@ pub fn subscribe(
 ) -> Future(Nil) {
   use val <- future.await(stream.next())
   case val {
-    Next(item, rest) -> {
+    Next(item) -> {
       cb(item)
-      subscribe(to: rest, then: cb)
+      subscribe(to: stream, then: cb)
     }
-    Last(item) -> {
-      cb(item)
+    Last -> {
       future.resolve(Nil)
     }
   }
