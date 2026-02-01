@@ -37,6 +37,9 @@ pub type Platform {
 
 /// Retrieves the operating system platform the program is running on.
 /// 
+/// In the case of a web environment, this will attempt to retrieve
+/// the host operating system platform.
+/// 
 /// ## Examples
 /// 
 /// Check if the platform is Windows:
