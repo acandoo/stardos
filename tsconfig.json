@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      // this is very hacky
+      "gleam": ["build/dev/javascript/prelude.mjs"],
+      "gleam:@*": ["build/dev/javascript/*.mjs"]
+    },
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts"]
+}
