@@ -33,7 +33,7 @@ export function spawnAbortableTask(future: Future<any>): Result {
   // periodically to see if it has been aborted, and handle it accordingly.
   new Promise((resolve, reject) => {
     signal.addEventListener('abort', () => {
-      reject(new Error('Task aborted'))
+      resolve(new Error('Task aborted'))
     })
     future().then(resolve)
   })
