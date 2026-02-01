@@ -1,8 +1,11 @@
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/time/duration
 import stardos/concurrent/future.{type Future}
+import stardos/concurrent/stream
 import stardos/concurrent/task
+import stardos/concurrent/timer
 import stardos/env
 
 pub fn main() -> Nil {
@@ -22,6 +25,31 @@ pub fn main() -> Nil {
         env.Unknown -> io.println("Running on an unknown JavaScript runtime.")
       }
   }
+  task.spawn(sleep_example())
+  task.spawn(interval_example())
+  Nil
+}
+
+fn interval_example() -> Future(Nil) {
+  let timer_stream = timer.interval(duration.seconds(2))
+  let subscription =
+    stream.subscribe(to: timer_stream, then: fn(_) {
+      io.println("Interval tick")
+    })
+  io.println("interval should not be spawned")
+  use _ <- future.await(timer.sleep(duration.seconds(3)))
+  io.println("Starting interval.")
+  let assert Ok(interval_task) = task.spawn_abortable(subscription)
+  use _ <- future.await(timer.sleep(duration.seconds(10)))
+  io.println("Stopping interval.")
+  task.abort(interval_task)
+  future.resolve(Nil)
+}
+
+fn sleep_example() -> Future(Nil) {
+  use _ <- future.await(timer.sleep(duration.seconds(3)))
+  io.println("Slept for 3 seconds.")
+  future.resolve(Nil)
 }
 
 fn async_main() -> Future(Nil) {
