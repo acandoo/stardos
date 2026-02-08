@@ -5,6 +5,7 @@
 
 import gleam/dict.{type Dict}
 import gleam/result
+import gleam/string
 import stardos/os
 
 pub type Runtime {
@@ -88,7 +89,7 @@ pub fn set_cwd(path: String) -> Result(Nil, Nil)
 // https://doc.rust-lang.org/std/env/fn.home_dir.html
 
 /// Retrieves the home directory path for the current user.
-/// TODO improve implementation to match Node's `os.homedir()`
+@external(javascript, "./env_ffi.mjs", "homeDir")
 pub fn home_dir() -> Result(String, Nil) {
   case os.platform() {
     os.Win32 -> var("USERPROFILE")
@@ -97,7 +98,7 @@ pub fn home_dir() -> Result(String, Nil) {
 }
 
 /// Retrieves the path to the system's temporary directory.
-/// TODO improve implementation to match Node's `os.tmpdir()`
+@external(javascript, "./env_ffi.mjs", "tempDir")
 pub fn temp_dir() -> String {
   let path = case os.platform() {
     os.Win32 -> {
