@@ -82,6 +82,11 @@ pub fn cwd() -> Result(String, Nil)
 @external(javascript, "./env_ffi.mjs", "setCwd")
 pub fn set_cwd(path: String) -> Result(Nil, Nil)
 
+// Although it looks weird, returning a Result for
+// home_dir but not for temp_dir has precedent
+// when compared to other languages. See Rust's std::env module for example:
+// https://doc.rust-lang.org/std/env/fn.home_dir.html
+
 /// Retrieves the home directory path for the current user.
 /// TODO improve implementation to match Node's `os.homedir()`
 pub fn home_dir() -> Result(String, Nil) {
