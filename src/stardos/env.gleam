@@ -99,11 +99,37 @@ pub fn home_dir() -> Result(String, Nil) {
 /// Retrieves the path to the system's temporary directory.
 /// TODO improve implementation to match Node's `os.tmpdir()`
 pub fn temp_dir() -> String {
-  let assert Ok(dir) = {
-    use _ <- result.try_recover(var("TMPDIR"))
-    use _ <- result.try_recover(var("TMP"))
-    use _ <- result.try_recover(var("TEMP"))
-    Ok("/tmp")
+  let path = case os.platform() {
+    os.Win32 -> {
+      // This maintains logic parity with Node's `os.tmpdir()` implementation on Windows,
+      // which checks the `TEMP`, `TMP`, `SystemRoot`, and `windir` environment variables in that order,
+      // and falls back to a system temp directory if none of those are set.
+      use <- result.lazy_unwrap(var("TEMP"))
+      use <- result.lazy_unwrap(var("TMP"))
+      let system_root = {
+        use <- result.lazy_unwrap(var("SystemRoot"))
+        use <- result.lazy_unwrap(var("windir"))
+        // This is *technically* not at parity with Node's implementation,
+        // but it would fall back to "undefined\\temp" in the absence of both `SystemRoot` and `windir`,
+        // which I don't think is worth replicating.
+        ""
+      }
+
+      system_root <> "\\temp"
+    }
+    _ -> {
+      use <- result.lazy_unwrap(var("TMPDIR"))
+      use <- result.lazy_unwrap(var("TMP"))
+      use <- result.lazy_unwrap(var("TEMP"))
+      "/tmp"
+    }
   }
-  dir
+  case
+    string.length(path) > 1
+    && string.ends_with(path, "\\")
+    && !string.ends_with(path, ":\\")
+  {
+    True -> string.drop_end(path, 1)
+    False -> path
+  }
 }
