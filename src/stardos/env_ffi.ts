@@ -1,11 +1,4 @@
-import {
-  List,
-  List$Empty,
-  List$NonEmpty,
-  Result$Error,
-  Result$Ok,
-  type Result
-} from 'gleam'
+import { List, List$Empty, Result$Error, Result$Ok, type Result } from 'gleam'
 import * as Dict from 'gleam:@gleam_stdlib/gleam/dict'
 import {
   type JavaScript,
@@ -55,7 +48,7 @@ export function program(): string {
 
 export function args(): List {
   if (globalThis.process) {
-    return List$NonEmpty(process.argv, List$Empty())
+    return List.fromArray(process.argv)
   }
 
   return List$Empty()
@@ -71,7 +64,7 @@ export function subArgs(): List {
     return List.fromArray(process.argv.slice(2))
   }
 
-  return List.fromArray([])
+  return List$Empty()
 }
 
 export function getVar(key: string): Result {
