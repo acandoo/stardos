@@ -67,23 +67,15 @@ export function subArgs(): List {
   return List$Empty()
 }
 
-export function getVar(key: string): Result {
-  if (globalThis.Deno) {
-    const value = Deno.env.get(key)
-    if (value === undefined) {
-      return Result$Error()
-    }
-    return Result$Ok(value)
-  }
-  if (globalThis.process) {
-    const value = process.env[key]
-    if (value === undefined) {
-      return Result$Error()
-    }
-    return Result$Ok(value)
-  }
+function env(key: string): string {
+  return (
+    globalThis.Deno?.env.get(key) ?? globalThis.process?.env[key] ?? undefined
+  )
+}
 
-  return Result$Error()
+export function getVar(key: string): Result {
+  let keyValue = env(key)
+  return keyValue === undefined ? Result$Error() : Result$Ok(keyValue)
 }
 
 export function setVar(key: string, value: string): void {
