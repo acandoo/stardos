@@ -135,7 +135,7 @@ pub fn var(var: String) -> Result(String, Nil)
 /// 
 /// ```gleam
 /// set_var("MY_VAR", "hello")
-/// // -> Ok(Nil)
+/// // -> Nil
 /// ```
 /// 
 /// After setting, retrieving `MY_VAR` will yield the new value:
