@@ -76,11 +76,28 @@ pub fn args() -> List(String)
 /// Retrieves the command-line arguments passed to the current process,
 /// excluding the program name and runtime.
 /// 
-/// ## Example
+/// ## Examples
 /// 
 /// Given a program invoked by Node with `node my_program.mjs arg1 arg2`:
 /// 
 /// ```gleam
+/// let sub_arguments = sub_args()
+/// // -> ["arg1", "arg2"]
+/// ```
+/// 
+/// Double hyphens when called with `npx` is passed in later versions to
+/// the program, so they are included in the sub-arguments:
+/// 
+/// ```gleam
+/// // npx @lucy/my_gleam_package -- arg1 arg2
+/// let sub_arguments = sub_args()
+/// // -> ["--", "arg1", "arg2"]
+/// ```
+/// 
+/// This is different in current versions of `npx` from `npm exec`:
+/// 
+/// ```gleam
+/// // npm exec --package=@lucy/my_gleam_package -- arg1 arg2
 /// let sub_arguments = sub_args()
 /// // -> ["arg1", "arg2"]
 /// ```
