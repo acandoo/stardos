@@ -59,27 +59,148 @@ pub fn runtime() -> Runtime
 @external(javascript, "./env_ffi.mjs", "program")
 pub fn program() -> String
 
+/// Retrieves the command-line arguments passed to the current process.
+/// 
+/// ## Example
+/// 
+/// Given a program invoked by Node with `node my_program.mjs arg1 arg2`:
+/// 
+/// ```gleam
+/// let arguments = args()
+/// // -> ["/home/lucy/.local/bin/node", "/home/lucy/.local/bin/my_program.mjs", "arg1", "arg2"]
+/// ```
+/// 
 @external(javascript, "./env_ffi.mjs", "args")
 pub fn args() -> List(String)
 
+/// Retrieves the command-line arguments passed to the current process,
+/// excluding the program name and runtime.
+/// 
+/// ## Example
+/// 
+/// Given a program invoked by Node with `node my_program.mjs arg1 arg2`:
+/// 
+/// ```gleam
+/// let sub_arguments = sub_args()
+/// // -> ["arg1", "arg2"]
+/// ```
+///
 @external(javascript, "./env_ffi.mjs", "subArgs")
 pub fn sub_args() -> List(String)
 
+/// Retrieves the environment variable with the given name, if it exists.
+/// 
+/// ## Examples
+/// 
+/// Given an environment variable `MY_VAR` with value `hello`:
+/// 
+/// ```gleam
+/// let my_var = var("MY_VAR")
+/// // -> Ok("hello")
+/// ```
+/// 
+/// Given an environment variable `MY_VAR` that is not set:
+/// 
+/// ```gleam
+/// let my_var = var("MY_VAR")
+/// // -> Err(Nil)
+/// ```
+///
 @external(javascript, "./env_ffi.mjs", "getVar")
 pub fn var(var: String) -> Result(String, Nil)
 
+/// Sets an environment variable with the given name and value.
+/// 
+/// ## Examples
+/// 
+/// Set an environment variable `MY_VAR` to `hello`:
+/// 
+/// ```gleam
+/// set_var("MY_VAR", "hello")
+/// // -> Ok(Nil)
+/// ```
+/// 
+/// After setting, retrieving `MY_VAR` will yield the new value:
+/// 
+/// ```gleam
+/// let my_var = var("MY_VAR")
+/// // -> Ok("hello")
+/// ```
+///
 @external(javascript, "./env_ffi.mjs", "setVar")
 pub fn set_var(var: String, value: String) -> Nil
 
+/// Retrieves a dictionary of all environment variables and their values.
+/// 
+/// ## Example
+///
+/// Given environment variables `MY_VAR1=hello` and `MY_VAR2=world`:
+/// 
+/// ```gleam
+/// let env_vars = vars()
+/// // -> dict.from_list([#("MY_VAR1", "hello"), #("MY_VAR2", "world")])
+/// ```
+/// 
 @external(javascript, "./env_ffi.mjs", "getVars")
 pub fn vars() -> Dict(String, String)
 
+/// Removes the environment variable with the given name.
+/// 
+/// ## Examples
+/// 
+/// Given an environment variable `MY_VAR` that is set:
+/// 
+/// ```gleam
+/// remove_var("MY_VAR")
+/// // -> Nil
+/// 
+/// let my_var = var("MY_VAR")
+/// // -> Err(Nil)
+/// ```
+/// 
+/// Given an already unset environment variable `MY_VAR`:
+/// 
+/// ```gleam
+/// remove_var("MY_VAR")
+/// // -> Nil
+/// ```
+/// 
 @external(javascript, "./env_ffi.mjs", "removeVar")
 pub fn remove_var(var: String) -> Nil
 
+/// Retrieves the current working directory of the process.
+/// 
+/// ## Example
+/// 
+/// Given the current working directory is `/home/lucy/projects/my_app`:
+/// 
+/// ```gleam
+/// let current_dir = cwd()
+/// // -> Ok("/home/lucy/projects/my_app")
+/// ```
+///
 @external(javascript, "./env_ffi.mjs", "cwd")
 pub fn cwd() -> Result(String, Nil)
 
+/// Changes the current working directory of the process to the specified path.
+/// 
+/// ## Examples
+/// 
+/// Change the current working directory to `/home/lucy`:
+/// 
+/// ```gleam
+/// set_cwd("/home/lucy")
+/// // -> Ok(Nil)
+/// ```
+/// 
+/// Ensure the current working directory has been updated:
+/// 
+/// ```gleam
+/// let assert Ok(_) = set_cwd("/home/lucy")
+/// let current_dir = cwd()
+/// // -> Ok("/home/lucy")
+/// ```
+///
 @external(javascript, "./env_ffi.mjs", "setCwd")
 pub fn set_cwd(path: String) -> Result(Nil, Nil)
 
