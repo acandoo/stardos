@@ -18,8 +18,16 @@ jobs:
           rebar3-version: '3'
           # elixir-version: "1"
       - uses: pnpm/action-setup@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: "^2"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
       - run: gleam deps download
       - run: pnpm install
       - run: pnpm build:javascript
-      - run: gleam test
+      - run: gleam test -t javascript --runtime node
+      - run: gleam test -t javascript --runtime deno
+      - run: gleam test -t javascript --runtime bun
       - run: gleam format --check src test
