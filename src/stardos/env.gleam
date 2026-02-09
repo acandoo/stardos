@@ -63,10 +63,11 @@ pub fn program() -> String
 /// 
 /// ## Example
 /// 
-/// Given a program invoked by Node with `node my_program.mjs arg1 arg2`:
+/// Given a program invoked by `gleam run arg1 arg2`:
 /// 
 /// ```gleam
 /// let arguments = args()
+/// // On the Node runtime, this will include the Node executable and program path:
 /// // -> ["/home/lucy/.local/bin/node", "/home/lucy/.local/bin/my_program.mjs", "arg1", "arg2"]
 /// ```
 /// 
@@ -78,7 +79,7 @@ pub fn args() -> List(String)
 /// 
 /// ## Examples
 /// 
-/// Given a program invoked by Node with `node my_program.mjs arg1 arg2`:
+/// Given a program invoked by `gleam run arg1 arg2`:
 /// 
 /// ```gleam
 /// let sub_arguments = sub_args()
