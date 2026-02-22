@@ -1,4 +1,5 @@
 import gleam/list
+import internal/helpers
 import shellout
 import stardos/env
 
@@ -25,18 +26,7 @@ pub fn var_set_var_test() {
 
 pub fn sub_args_test() {
   // To prevent duplicate testing of runtimes, we inherit the runtime from the test runner
-  let runtime_base_flag = case env.runtime() {
-    env.Erlang(_) -> ["erlang"]
-    env.JavaScript(js_runtime) -> {
-      let js_flag = case js_runtime {
-        env.Node(_) -> ["--runtime", "node"]
-        env.Deno(_) -> ["--runtime", "deno"]
-        env.Bun(_) -> ["--runtime", "bun"]
-        env.Unknown -> []
-      }
-      ["javascript", ..js_flag]
-    }
-  }
+  let runtime_base_flag = helpers.runtime_flags()
   let empty_flag =
     list.append(
       ["run", "-m", "env/args_empty_fixture", "-t"],

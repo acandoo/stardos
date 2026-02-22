@@ -1,10 +1,10 @@
 import gleam/time/duration.{type Duration}
 import gleam/time/timestamp
+import internal/helpers
 import shellout
 import stardos/concurrent/future.{type Future}
 import stardos/concurrent/task
 import stardos/concurrent/timer
-import stardos/env
 
 // Accounts for overhead of spawning a process
 const shell_tolerance_ms = 100
@@ -32,18 +32,7 @@ pub fn timer_sleep_tolerance_test() -> Nil {
 // timer.timeout tests
 
 pub fn timer_timeout_lifetime_test() -> Nil {
-  let runtime_base_flag = case env.runtime() {
-    env.Erlang(_) -> ["erlang"]
-    env.JavaScript(js_runtime) -> {
-      let js_flag = case js_runtime {
-        env.Node(_) -> ["--runtime", "node"]
-        env.Deno(_) -> ["--runtime", "deno"]
-        env.Bun(_) -> ["--runtime", "bun"]
-        env.Unknown -> []
-      }
-      ["javascript", ..js_flag]
-    }
-  }
+  let runtime_base_flag = helpers.runtime_flags()
 
   let first = timestamp.system_time()
   let assert Ok(_) =
