@@ -6,7 +6,7 @@ import {
   type First
 } from 'gleam:@stardos/stardos/concurrent/stream'
 
-export function sleep(duration): Future<undefined> {
+export function timeout(duration): Future<undefined> {
   let timer: NodeJS.Timeout
   return {
     execute: () =>

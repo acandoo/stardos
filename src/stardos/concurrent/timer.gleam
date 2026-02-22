@@ -2,8 +2,8 @@ import gleam/time/duration.{type Duration}
 import stardos/concurrent/future.{type Future}
 import stardos/concurrent/stream.{type Stream}
 
-@external(javascript, "./timer_ffi.mjs", "sleep")
-pub fn sleep(duration: Duration) -> Future(Nil)
+@external(javascript, "./timer_ffi.mjs", "timeout")
+pub fn timeout(duration: Duration) -> Future(Nil)
 
 // @external(javascript, "./timer_ffi.mjs", "interval")
 pub fn interval(duration: Duration) -> Stream(Nil) {
@@ -11,14 +11,14 @@ pub fn interval(duration: Duration) -> Stream(Nil) {
   // when subscribed to, causing it to drift over time.
 
   stream.First(next: {
-    use _ <- future.await(sleep(duration))
+    use _ <- future.await(timeout(duration))
     future.resolve(interval_loop(duration))
   })
 }
 
 fn interval_loop(duration: Duration) -> Stream(Nil) {
   stream.Continue(Nil, {
-    use _ <- future.await(sleep(duration))
+    use _ <- future.await(timeout(duration))
     future.resolve(interval_loop(duration))
   })
 }
