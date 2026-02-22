@@ -11,7 +11,12 @@ pub fn interval(duration: Duration) -> Stream(Nil) {
 
   stream.First(next: {
     use _ <- future.await(sleep(duration))
-    future.resolve(stream.Continue(Nil, future.resolve(interval_loop(duration))))
+    future.resolve(
+      stream.Continue(Nil, {
+        use _ <- future.await(sleep(duration))
+        future.resolve(interval_loop(duration))
+      }),
+    )
   })
 }
 
