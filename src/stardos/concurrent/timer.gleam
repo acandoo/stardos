@@ -2,11 +2,19 @@ import gleam/time/duration.{type Duration}
 import stardos/concurrent/future.{type Future}
 import stardos/concurrent/stream.{type Stream}
 
-@external(javascript, "./timer_ffi.mjs", "sleep")
-pub fn sleep(duration: Duration) -> Nil
+pub fn sleep(dur: Duration) -> Nil {
+  sleep_ms(duration.to_milliseconds(dur))
+}
 
-@external(javascript, "./timer_ffi.mjs", "timeout")
-pub fn timeout(duration: Duration) -> Future(Nil)
+@external(javascript, "./timer_ffi.mjs", "sleepMs")
+fn sleep_ms(duration: Int) -> Nil
+
+pub fn timeout(duration: Duration) -> Future(Nil) {
+  timeout_ms(duration.to_milliseconds(duration))
+}
+
+@external(javascript, "./timer_ffi.mjs", "timeoutMs")
+fn timeout_ms(duration: Int) -> Future(Nil)
 
 /// Creates a Stream that produces `Nil` at regular intervals specified by the `duration`.
 @external(javascript, "./timer_ffi.mjs", "interval")
