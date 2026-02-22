@@ -7,16 +7,12 @@ pub fn sleep(duration: Duration) -> Future(Nil)
 
 // @external(javascript, "./timer_ffi.mjs", "interval")
 pub fn interval(duration: Duration) -> Stream(Nil) {
-  // This isn't *perfectly* accurate, since the callback will be scheduled after the duration
+  // This isn't *perfectly* accurate, since the duration will wait for the callback
+  // when subscribed to, causing it to drift over time.
 
   stream.First(next: {
     use _ <- future.await(sleep(duration))
-    future.resolve(
-      stream.Continue(Nil, {
-        use _ <- future.await(sleep(duration))
-        future.resolve(interval_loop(duration))
-      }),
-    )
+    future.resolve(interval_loop(duration))
   })
 }
 
