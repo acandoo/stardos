@@ -2,6 +2,9 @@ import gleam/time/duration.{type Duration}
 import stardos/concurrent/future.{type Future}
 import stardos/concurrent/stream.{type Stream}
 
+@external(javascript, "./timer_ffi.mjs", "sleep")
+pub fn sleep(duration: Duration) -> Nil
+
 @external(javascript, "./timer_ffi.mjs", "timeout")
 pub fn timeout(duration: Duration) -> Future(Nil)
 

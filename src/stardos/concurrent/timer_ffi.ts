@@ -6,6 +6,14 @@ import {
   type First
 } from 'gleam:@stardos/stardos/concurrent/stream'
 
+export function sleep(duration): void {
+  const durationMs = to_milliseconds(duration)
+  const start = Date.now()
+  while (Date.now() - start < durationMs) {
+    // Busy wait
+  }
+}
+
 export function timeout(duration): Future<undefined> {
   let timer: NodeJS.Timeout
   return {
