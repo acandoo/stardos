@@ -17,21 +17,29 @@ export function timeout(duration): Future<undefined> {
   }
 }
 
-// todo figure out how to solve timing issue
-// export function interval(duration): First {
-//   const durationMs = to_milliseconds(duration)
-//   let intervalTimer: NodeJS.Timeout
-//   return Stream$First({
-//     execute: () => {
-//       intervalTimer = setIn
-//       return new Promise((res) => {
-//         timerCb = () => {
-//           res(Stream$Continue(undefined))
-//         }
-//         if (intervalTimer === 0)
-//           intervalTimer = setInterval(timerCb, durationMs)
-//       })
-//     },
-//     cleanup: () => clearInterval(intervalTimer)
-//   })
-// }
+export function interval(duration): First {
+  const durationMs = to_milliseconds(duration)
+  let timerCb: () => void
+  let intervalTimer: NodeJS.Timeout
+
+  const intervalLoop = () =>
+    Stream$Continue(undefined, {
+      execute: () =>
+        new Promise((res) => {
+          timerCb = () => {
+            res(intervalLoop())
+          }
+        })
+    })
+
+  return Stream$First({
+    execute: () =>
+      new Promise((res) => {
+        timerCb = () => {
+          res(intervalLoop())
+        }
+        intervalTimer = setInterval(() => timerCb(), durationMs)
+      }),
+    cleanup: () => clearInterval(intervalTimer)
+  })
+}

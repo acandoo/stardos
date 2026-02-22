@@ -5,7 +5,8 @@ import stardos/concurrent/stream.{type Stream}
 @external(javascript, "./timer_ffi.mjs", "timeout")
 pub fn timeout(duration: Duration) -> Future(Nil)
 
-// @external(javascript, "./timer_ffi.mjs", "interval")
+/// Creates a Stream that produces `Nil` at regular intervals specified by the `duration`.
+@external(javascript, "./timer_ffi.mjs", "interval")
 pub fn interval(duration: Duration) -> Stream(Nil) {
   // This isn't *perfectly* accurate, since the duration will wait for the callback
   // when subscribed to, causing it to drift over time.
