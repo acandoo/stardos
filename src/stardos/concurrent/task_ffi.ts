@@ -12,14 +12,13 @@ export type AbortableTask<T> = Task<T | Error> & {
 
 export function spawnTask<T>(future: Future<T>): Task<T> {
   // Note: we want the event loop to stay while the Promise is running,
-  // so the executor is wrapped and a setInterval is used to keep it alive.
+  // so a setInterval is used to keep it alive.
+  const interval = setInterval(() => {})
+
   return {
-    promise: new Promise(() => {
-      const interval = setInterval(() => {})
-      future.execute().finally(() => {
-        clearInterval(interval)
-        future.cleanup?.()
-      })
+    promise: future.execute().finally(() => {
+      clearInterval(interval)
+      future.cleanup?.()
     })
   }
 }
