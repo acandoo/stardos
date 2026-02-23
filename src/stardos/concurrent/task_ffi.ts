@@ -2,31 +2,28 @@ import { type Future } from './future_ffi'
 import { type Result, Result$Error, Result$Ok } from 'gleam'
 import { AbortableTaskError$Unsupported } from 'gleam:@stardos/stardos/concurrent/task'
 
-type Task = {
-  // Unique identifier for the task, used to prevent equality between tasks.
-  taskId: symbol
+export type Task<T> = {
+  promise: Promise<T>
 }
 
-type AbortableTask = Task & {
+export type AbortableTask<T> = Task<T | Error> & {
   abortController: AbortController
 }
 
-export function spawnTask(future: Future<any>): Task {
+export function spawnTask<T>(future: Future<T>): Task<T> {
   // Note: we want the event loop to stay while the Promise is running,
-  // so the executor is wrapped and a setInterval is used to keep it alive.
-  new Promise(() => {
-    const interval = setInterval(() => {})
-    future.execute().finally(() => {
+  // so a setInterval is used to keep it alive.
+  const interval = setInterval(() => {})
+
+  return {
+    promise: future.execute().finally(() => {
       clearInterval(interval)
       future.cleanup?.()
     })
-  })
-  return {
-    taskId: Symbol()
   }
 }
 
-export function spawnAbortableTask(future: Future<any>): Result {
+export function spawnAbortableTask<T>(future: Future<T>): Result {
   if (!globalThis.AbortController)
     return Result$Error(AbortableTaskError$Unsupported())
   const abortController = new AbortController()
@@ -35,26 +32,26 @@ export function spawnAbortableTask(future: Future<any>): Result {
   // Note: The future's computation should ideally check the signal
   // periodically to see if it has been aborted, and handle it accordingly.
   let isAborted = false
-  new Promise((resolve) => {
-    signal.addEventListener('abort', () => {
-      isAborted = true
-      future.cleanup?.()
-      resolve(new Error('Task aborted'))
-    })
-    future.execute().finally(() => {
-      if (!isAborted) {
+  const task = {
+    promise: new Promise((resolve) => {
+      signal.addEventListener('abort', () => {
+        isAborted = true
         future.cleanup?.()
-      }
-      resolve(null)
-    })
-  })
-
-  return Result$Ok({
-    taskId: Symbol(),
+        resolve(new Error('Task aborted'))
+      })
+      future.execute().finally(() => {
+        if (!isAborted) {
+          future.cleanup?.()
+        }
+        resolve(null)
+      })
+    }),
     abortController
-  } as AbortableTask)
+  }
+
+  return Result$Ok(task as AbortableTask<T>)
 }
 
-export function abortTask(task: AbortableTask): void {
+export function abortTask<T>(task: AbortableTask<T>): void {
   task.abortController.abort()
 }
