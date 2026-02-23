@@ -8,9 +8,9 @@
   "scripts": {
     "test": "gleam test -t javascript && gleam test -t erlang",
     "build": "pnpm run build:javascript && pnpm run build:erlang",
-    "build:javascript": "node ./scripts/build-ffi.mjs && gleam build -t javascript",
+    "build:javascript": "node ./dev/build-ffi.mjs && gleam build -t javascript",
     "build:erlang": "gleam build -t erlang",
-    "watch": "node ./scripts/watch.mjs"
+    "watch": "node ./dev/watch.mjs"
   },
   "keywords": [],
   "author": "acandoo",
