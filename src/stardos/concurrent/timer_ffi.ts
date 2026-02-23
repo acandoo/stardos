@@ -7,10 +7,10 @@ import {
 } from 'gleam:@stardos/stardos/concurrent/stream'
 
 export function sleepMs(durationMs: number): void {
-  const start = Date.now()
-  while (Date.now() - start < durationMs) {
-    // Busy wait
-  }
+  // Use Atomics.wait on a SharedArrayBuffer to block without busy-waiting.
+  const sharedBuffer = new SharedArrayBuffer(4)
+  const int32 = new Int32Array(sharedBuffer)
+  Atomics.wait(int32, 0, 0, durationMs)
 }
 
 export function timeoutMs(durationMs: number): Future<undefined> {
