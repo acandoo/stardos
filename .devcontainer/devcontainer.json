@@ -2,6 +2,8 @@
   "image": "mcr.microsoft.com/devcontainers/universal:2",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {},
-    "ghcr.io/acandoo/features/gleam:1": {}
-  }
+    "ghcr.io/acandoo/features/gleam:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/just:1": {}
+  },
+  "postCreateCommand": "just setup"
 }
