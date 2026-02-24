@@ -18,16 +18,16 @@ async function watch() {
         buildFile(`src/${event.filename}`).then(() =>
           console.log(`Rebuilt ${event.filename}`)
         )
-      handleCreateorDelete(event)
+      handleCreateOrDelete(event)
     }
   }
 }
 
-async function handleCreateorDelete(event) {
+async function handleCreateOrDelete(event) {
   try {
     await fs.access(`src/${event.filename}`)
     buildFile(`src/${event.filename}`)
-  } catch (err) {
+  } catch {
     const jsFileName = `src/${event.filename.slice(0, -3)}.mjs`
     try {
       await fs.rm(jsFileName)
