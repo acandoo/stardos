@@ -68,7 +68,6 @@ jobs:
         with:
           run_install: true
       - uses: actions/setup-node@v4
-        if: matrix.files == 'javascript'
         with:
           node-version: '22'
           cache: 'pnpm'
