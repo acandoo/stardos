@@ -7,6 +7,10 @@ default:
 [parallel]
 setup: _setup-javascript _setup-gleam _setup-hook
 
+# Setup the repository for first use without installing the pre-commit hook
+[parallel]
+setup-no-hook: _setup-javascript _setup-gleam
+
 _setup-javascript:
     pnpm install
 
