@@ -11,7 +11,8 @@
     "moduleResolution": "bundler",
     "module": "esnext",
     "target": "esnext",
-    "noEmit": true
+    "noEmit": true,
+    "strict": true
   },
   "include": ["src/**/*.ts"]
 }

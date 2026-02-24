@@ -2,7 +2,7 @@ import { List } from 'gleam'
 
 export type Future<Result> = {
   execute: () => Promise<Result>
-  cleanup: () => void
+  cleanup: (() => void) | undefined
 }
 
 export function newFuture<Result>(compute: () => Result): Future<Result> {
@@ -21,7 +21,7 @@ export function resolveFuture<Result>(input: Result): Future<Result> {
 
 export function awaitFuture<NewResult, PrevResult>(
   future: Future<PrevResult>,
-  cb: (PrevResult) => Future<NewResult>
+  cb: (arg0: PrevResult) => Future<NewResult>
 ): Future<NewResult> {
   return {
     execute: async () => {
