@@ -5,11 +5,11 @@ default:
 
 # Setup the repository for first use
 [parallel]
-setup: _setup-javascript _setup-gleam _setup-hook
+setup: _setup-javascript _setup-gleam _setup-hooks
 
 # Setup the repository for first use without installing the pre-commit hook
 [parallel]
-setup-no-hook: _setup-javascript _setup-gleam
+setup-no-hooks: _setup-javascript _setup-gleam
 
 _setup-javascript:
     pnpm install
@@ -17,18 +17,8 @@ _setup-javascript:
 _setup-gleam:
     gleam deps download
 
-_setup-hook:
-    #!/bin/env node
-    import fs from 'node:fs/promises'
-    import path from 'node:path'
-
-    await fs.chmod(path.join('dev', 'pre-commit'), 0o755)
-    const preCommitHookPath = path.join('.git', 'hooks', 'pre-commit')
-    const preCommitHookOldPath = path.join('.git', 'hooks', 'pre-commit.old')
-    await fs.rename(preCommitHookPath, preCommitHookOldPath).catch(() => {})
-
-    const relativeSymlinkPath = path.relative(path.join('.git', 'hooks'), path.join('dev', 'pre-commit'))
-    await fs.symlink(relativeSymlinkPath, preCommitHookPath)
+_setup-hooks:
+    node dev/setup-hooks.mjs
 
 # test scripts
 

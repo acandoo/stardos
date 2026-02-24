@@ -22,4 +22,4 @@ Aside from Gleam, the following software is expected in development:
 
 Just run `just setup`!
 
-The recipe will install Gleam and JavaScript dependencies, as well as install a pre-commit git hook to format and test your changes before committing. If you don't want the hooks set up, run `just setup-no-hook`. From there, the other `just` commands are your friends.
+The recipe will install Gleam and JavaScript dependencies, as well as install hooks to format and test your changes before committing, and install new dependencies on pull. If you don't want the hooks set up, run `just setup-no-hooks`. From there, the other `just` commands are your friends.
