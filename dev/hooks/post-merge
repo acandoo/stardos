@@ -1,0 +1,15 @@
+#!/bin/sh
+
+STASH_NAME=pre-commit-$(date +%s)
+git stash push --keep-index --include-untracked -m "$STASH_NAME"
+
+STASHED=$(git stash list | grep "$STASH_NAME")
+
+just setup-no-hooks
+RESULT=$?
+
+if [ -n "$STASHED" ]; then
+  git stash pop -q
+fi
+
+exit $RESULT

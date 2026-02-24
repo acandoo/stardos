@@ -1,4 +1,7 @@
-import { to_milliseconds } from 'gleam:@gleam_time/gleam/time/duration'
+import {
+  to_milliseconds,
+  type empty as Duration
+} from 'gleam:@gleam_time/gleam/time/duration'
 import { type Future } from './future_ffi'
 import {
   Stream$First,
@@ -24,7 +27,7 @@ export function timeoutMs(durationMs: number): Future<undefined> {
   }
 }
 
-export function interval(duration): First {
+export function interval(duration: typeof Duration): First {
   const durationMs = to_milliseconds(duration)
   let timerCb: () => void
   let intervalTimer: NodeJS.Timeout

@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": [
+    "build",
+    "node_modules",
+    "src/**.mjs",
+    "manifest.toml",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml"
+  ],
+  "singleQuote": true,
+  "semi": false,
+  "trailingComma": "none"
+}

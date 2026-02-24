@@ -69,7 +69,7 @@ export function subArgs(): List {
   return List$Empty()
 }
 
-function env(key: string): string {
+function env(key: string): string | undefined {
   return (
     globalThis.Deno?.env.get(key) ?? globalThis.process?.env[key] ?? undefined
   )
@@ -127,9 +127,8 @@ export function setCwd(path: string): Result {
       process.chdir(path)
       return Result$Ok()
     }
-  } finally {
-    return Result$Error()
-  }
+  } catch {}
+  return Result$Error()
 }
 
 // Since importing is asynchronous top-level await is needed for graceful
@@ -176,7 +175,11 @@ export function tempDir(): string {
 
   // if not windows, check for env vars and fallback to /tmp
   let envVarPath = env('TMPDIR') || env('TMP') || env('TEMP')
-  if (envVarPath?.length > 1 && envVarPath?.[envVarPath.length - 1] === '/') {
+  if (
+    envVarPath &&
+    envVarPath.length > 1 &&
+    envVarPath[envVarPath.length - 1] === '/'
+  ) {
     envVarPath = envVarPath.slice(0, -1)
   }
   return envVarPath || '/tmp'
