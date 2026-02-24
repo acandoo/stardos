@@ -18,15 +18,15 @@ async function preCommitSetup() {
 async function postMergeSetup() {
   const postMergeRepoPath = path.join('dev', 'hooks', 'post-merge')
   await fs.chmod(postMergeRepoPath, 0o755)
-  const preCommitHookPath = path.join('.git', 'hooks', 'post-merge')
-  const preCommitHookOldPath = path.join('.git', 'hooks', 'post-merge.old')
-  await fs.rename(preCommitHookPath, preCommitHookOldPath).catch(() => {})
+  const postMergeHookPath = path.join('.git', 'hooks', 'post-merge')
+  const postMergeHookOldPath = path.join('.git', 'hooks', 'post-merge.old')
+  await fs.rename(postMergeHookPath, postMergeHookOldPath).catch(() => {})
 
   const relativeSymlinkPath = path.relative(
     path.join('.git', 'hooks'),
     postMergeRepoPath
   )
-  await fs.symlink(relativeSymlinkPath, preCommitHookPath)
+  await fs.symlink(relativeSymlinkPath, postMergeHookPath)
 }
 
 preCommitSetup()
