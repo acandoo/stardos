@@ -7,13 +7,8 @@
   "license": "Apache-2.0",
   "author": "acandoo",
   "type": "module",
-  "main": "index.js",
   "scripts": {
-    "test": "gleam test -t javascript && gleam test -t erlang",
-    "build": "pnpm run build:javascript && pnpm run build:erlang",
-    "build:javascript": "node ./dev/build-ffi.mjs && gleam build -t javascript",
-    "build:erlang": "gleam build -t erlang",
-    "watch": "node ./dev/watch.mjs"
+    "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {
     "@types/bun": "^1.3.6",
