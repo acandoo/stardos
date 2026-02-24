@@ -127,9 +127,7 @@ export function setCwd(path: string): Result {
       process.chdir(path)
       return Result$Ok()
     }
-  } catch {
-    return Result$Error()
-  }
+  } catch {}
   return Result$Error()
 }
 
