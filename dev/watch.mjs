@@ -2,11 +2,6 @@ import fs from 'node:fs/promises'
 import { buildFile } from './common.mjs'
 import { runBuild } from './build-ffi.mjs'
 
-if (!process.argv[1] == 'dev/watch.mjs') {
-  console.error('This script should only be run from the project root')
-  process.exit(1)
-}
-
 async function watch() {
   await runBuild()
   const watcher = fs.watch('src', { recursive: true })

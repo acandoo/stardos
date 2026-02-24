@@ -1,11 +1,6 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-if (!process.argv[1] == 'dev/setup-hooks.mjs') {
-  console.error('This script should only be run from the project root')
-  process.exit(1)
-}
-
 async function preCommitSetup() {
   const preCommitRepoPath = path.join('dev', 'hooks', 'pre-commit')
   await fs.chmod(preCommitRepoPath, 0o755)
