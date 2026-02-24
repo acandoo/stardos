@@ -9,11 +9,13 @@ async function watch() {
   for await (const event of watcher) {
     if (event.filename?.endsWith('.ts')) {
       console.log(`Detected event in ${event.filename}: ${event.eventType}`)
-      if (event.eventType === 'change')
+      if (event.eventType === 'change') {
         buildFile(`src/${event.filename}`).then(() =>
           console.log(`Rebuilt ${event.filename}`)
         )
-      handleCreateOrDelete(event)
+      } else {
+        handleCreateOrDelete(event)
+      }
     }
   }
 }
