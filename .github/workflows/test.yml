@@ -51,12 +51,17 @@ jobs:
         if: matrix.runtime == 'bun'
         with:
           bun-version: latest
-      - run: gleam deps download
-      - run: pnpm install
-      - run: node ./dev/build-ffi.mjs
-      - run: gleam build -t javascript
+      - name: Install Gleam dependencies
+        run: gleam deps download
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build FFI
+        run: node ./dev/build-ffi.mjs
+      - name: Build JavaScript
+        run: gleam build -t javascript
 
-      - run: gleam test -t javascript --runtime ${{ matrix.runtime }}
+      - name: Test JavaScript
+        run: gleam test -t javascript --runtime ${{ matrix.runtime }}
 
   format-lint-javascript:
     timeout-minutes: 5
@@ -66,13 +71,17 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          run_install: true
+          run_install: false
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
-      - run: ./node_modules/.bin/oxfmt --check
-      - run: ./node_modules/.bin/oxlint
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check formatting
+        run: ./node_modules/.bin/oxfmt --check
+      - name: Check linting
+        run: ./node_modules/.bin/oxlint
 
   format-lint-gleam:
     timeout-minutes: 5
@@ -83,5 +92,7 @@ jobs:
         with:
           otp-version: '28'
           gleam-version: '1.14.0'
-      - run: gleam format --check src test dev
-      - run: gleam check
+      - name: Check Gleam formatting
+        run: gleam format --check
+      - name: Check Gleam linting
+        run: gleam check
