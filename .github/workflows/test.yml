@@ -58,7 +58,7 @@ jobs:
 
       - run: gleam test -t javascript --runtime ${{ matrix.runtime }}
 
-  format-javascript:
+  format-lint-javascript:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -72,8 +72,9 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
       - run: ./node_modules/.bin/oxfmt --check
+      - run: ./node_modules/.bin/oxlint
 
-  format-gleam:
+  format-lint-gleam:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
@@ -83,3 +84,4 @@ jobs:
           otp-version: '28'
           gleam-version: '1.14.0'
       - run: gleam format --check src test dev
+      - run: gleam check

@@ -95,3 +95,12 @@ _format-check-gleam:
 
 _format-check-javascript:
     ./node_modules/.bin/oxfmt --check
+
+[parallel]
+lint: _lint-gleam _lint-javascript
+
+_lint-gleam:
+    gleam check
+
+_lint-javascript:
+    ./node_modules/.bin/oxlint
