@@ -2,24 +2,16 @@
 # coding styles between different editors and IDEs
 # editorconfig.org
 
-# taken from [gleam_stdlib](https://github.com/gleam-lang/stdlib/blob/main/.editorconfig)
-# thank you :)
-
 # top-most EditorConfig file
 root = true
 
 # Matches multiple files with brace expansion notation
 # Set default charset
-[*.{gleam, erl, mjs, js, ts, toml, yaml, yml, json, jsonc, md}]
+[*]
 end_of_line = lf
 charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 indent_style = space
 indent_size = 2
-
-[*.erl]
-indent_size = 4
-
-[*.{erl, mjs, js, ts}]
 max_line_length = 80
