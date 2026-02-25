@@ -29,9 +29,3 @@ The recipe will install Gleam and JavaScript dependencies, as well as install ho
 This repository allows any AI-assistance or AI agent workflows in contributing, but please do mind that any pull requests or issues that add files like AGENTS.md, CLAUDE.md, Cursor rules, MCP servers, etc. will not be accepted. It is much more valuable to spend that time creating and improving documentation for humans than it is for AI agents, who IMO should be using repository heuristics like README.md, CONTRIBUTING.md, docs/\*\*.md, etc. at the end of the day.
 
 A rule of thumb for AI usage is that it should only ever _enhance_ the quality of your code, and never produce a worse result than if you were to write the code by hand. So, AI autocomplete, debugging, commit message drafting, code review, etc. are all allowed uses of AI, but "agentic" pull request creation without human oversight will very likely result in bad code quality and the pull request getting rejected.
-
-### AI usage
-
-This repository allows any AI-assistance or AI agent workflows in contributing, but please do mind that any pull requests or issues that add files like AGENTS.md, CLAUDE.md, Cursor rules, MCP servers, etc. will not be accepted. It is much more valuable to spend that time creating and improving documentation for humans than it is for AI agents, who IMO should be using repository heuristics like README.md, CONTRIBUTING.md, docs/\*\*.md, etc. at the end of the day.
-
-A rule of thumb for AI usage is that it should only ever _enhance_ the quality of your code, and never produce a worse result than if you were to write the code by hand. So, AI autocomplete, debugging, commit message drafting, code review, etc. are all allowed uses of AI, but "agentic" pull request creation without human oversight will very likely result in bad code quality and the pull request getting rejected.
