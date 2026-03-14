@@ -1,0 +1,32 @@
+name: markdown-format
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+  pull_request:
+    paths:
+      - '**/*.md'
+
+concurrency:
+  group: markdown-format-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format-markdown:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check Markdown formatting
+        run: ./node_modules/.bin/oxfmt --check '**/*.md'

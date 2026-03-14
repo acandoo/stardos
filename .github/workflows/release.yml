@@ -1,0 +1,46 @@
+name: release
+on:
+  release:
+    types: [released]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.1.0
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - uses: erlef/setup-beam@v1.18.2
+        with:
+          otp-version: '27.0'
+          rebar3-version: '3'
+          gleam-version: '1.14.0'
+
+      - name: check version
+        run: |
+          version="v$(cat gleam.toml | grep -m 1 "version" | sed -r "s/version *= *\"([[:digit:].]+)\"/\1/")"
+          if [ "$version" != "${{ github.event.release.tag_name }}" ]; then
+            echo "tag '${{ github.event.release.tag_name }}' does not match the version in gleam.toml"
+            echo "expected a tag name 'v$version'"
+            exit 1
+          fi
+
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Gleam dependencies
+        run: gleam deps download
+
+      - name: Build FFI
+        run: node ./dev/build-ffi.mjs
+
+      - name: Build package
+        run: gleam build
+
+      - run: gleam publish -y
+        env:
+          HEXPM_API_KEY: ${{ secrets.HEXPM_API_KEY }}

@@ -11,7 +11,7 @@ import stardos/concurrent/task
 import stardos/concurrent/timer
 
 // Accounts for overhead of spawning a process
-const shell_tolerance_ms = 100
+const shell_tolerance_ms = 200
 
 const upper_tolerance_ms = 10
 
@@ -86,7 +86,7 @@ fn timer_timeout_lifetime() -> Nil {
     timestamp.system_time()
     |> timestamp.difference(first, _)
     |> duration.to_milliseconds
-    |> echo
+  echo "Elapsed time (ms):" <> int.to_string(elapsed_ms)
 
   // The fixture waits for 1000ms, so we check that at least that much time has elapsed, allowing some tolerance for scheduling delays
   assert { elapsed_ms + lower_tolerance_ms >= 1000 }

@@ -27,4 +27,4 @@ Further documentation can be found at <https://hexdocs.pm/stardos>.
 
 # Contributing
 
-See our [contribution and development guide](CONTRIBUTING.md) for more info.
+See our [contribution and development guide](docs/CONTRIBUTING.md) for more info.
