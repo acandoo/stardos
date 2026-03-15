@@ -24,6 +24,9 @@ gleeunit = ">= 1.0.0 and < 2.0.0"
 shellout = ">= 1.7.0 and < 2.0.0"
 antimonia = ">= 1.1.0 and < 2.0.0"
 
+[javascript]
+typescript_declarations = true
+
 [javascript.deno]
 allow_env = true
 allow_read = true
