@@ -6,7 +6,7 @@ import { type Future } from './future_ffi'
 import {
   Stream$First,
   Stream$Continue,
-  type First
+  type Stream$ as Stream
 } from 'gleam:@stardos/stardos/concurrent/stream'
 
 export function sleepMs(durationMs: number): void {
@@ -27,7 +27,7 @@ export function timeoutMs(durationMs: number): Future<undefined> {
   }
 }
 
-export function interval(duration: typeof Duration): First {
+export function interval(duration: typeof Duration): Stream<undefined> {
   const durationMs = to_milliseconds(duration)
   let timerCb: () => void
   let intervalTimer: NodeJS.Timeout

@@ -23,7 +23,9 @@ export function spawnTask<T>(future: Future<T>): Task<T> {
   }
 }
 
-export function spawnAbortableTask<T>(future: Future<T>): Result {
+export function spawnAbortableTask<T>(
+  future: Future<T>
+): Result<AbortableTask<T>, Error> {
   if (!globalThis.AbortController)
     return Result$Error(AbortableTaskError$Unsupported())
   const abortController = new AbortController()

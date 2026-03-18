@@ -51,7 +51,7 @@ export function joinFutures<Result1, Result2>(
   }
 }
 
-export function firstFuture<T>(futures: List): Future<T> {
+export function firstFuture<T>(futures: List<Future<T>>): Future<T> {
   return {
     execute: async () => {
       return await Promise.race(
@@ -64,11 +64,11 @@ export function firstFuture<T>(futures: List): Future<T> {
   }
 }
 
-export function allFutures(futures: List): Future<List> {
+export function allFutures<T>(futures: List<Future<T>>): Future<List<T>> {
   return {
     execute: async () => {
       const result = await Promise.all(
-        futures.toArray().map((fut: Future<any>) => fut.execute())
+        futures.toArray().map((fut: Future<T>) => fut.execute())
       )
       return List.fromArray(result)
     },

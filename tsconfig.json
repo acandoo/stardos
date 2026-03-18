@@ -3,9 +3,11 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      // this is very hacky
-      "gleam": ["build/dev/javascript/prelude.mjs"],
-      "gleam:@*": ["build/dev/javascript/*.mjs"]
+      "gleam": [
+        "build/dev/javascript/prelude.d.mts",
+        "build/dev/javascript/prelude.mjs"
+      ],
+      "gleam:@*": ["build/dev/javascript/*.d.mts", "build/dev/javascript/*.mjs"]
     },
     "skipLibCheck": true,
     "moduleResolution": "bundler",
