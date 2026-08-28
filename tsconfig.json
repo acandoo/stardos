@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "baseUrl": ".",
     "paths": {
       "gleam": [
-        "build/dev/javascript/prelude.d.mts",
-        "build/dev/javascript/prelude.mjs"
+        "./build/dev/javascript/prelude.d.mts",
+        "./build/dev/javascript/prelude.mjs"
       ],
-      "gleam:@*": ["build/dev/javascript/*.d.mts", "build/dev/javascript/*.mjs"]
+      "gleam:@*": [
+        "./build/dev/javascript/*.d.mts",
+        "./build/dev/javascript/*.mjs"
+      ]
     },
     "skipLibCheck": true,
     "moduleResolution": "bundler",
