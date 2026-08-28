@@ -2,19 +2,12 @@ import {
   to_milliseconds,
   type empty as Duration
 } from 'gleam:@gleam_time/gleam/time/duration'
-import { type Future } from './future_ffi'
+import { type Future } from './concurrent/future_ffi'
 import {
   Stream$First,
   Stream$Continue,
   type Stream$ as Stream
 } from 'gleam:@stardos/stardos/concurrent/stream'
-
-export function sleepMs(durationMs: number): void {
-  // Use Atomics.wait on a SharedArrayBuffer to block without busy-waiting.
-  const sharedBuffer = new SharedArrayBuffer(4)
-  const int32 = new Int32Array(sharedBuffer)
-  Atomics.wait(int32, 0, 0, durationMs)
-}
 
 export function timeoutMs(durationMs: number): Future<undefined> {
   let timer: NodeJS.Timeout
