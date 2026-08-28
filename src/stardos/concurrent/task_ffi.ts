@@ -6,10 +6,6 @@ export type Task<T> = {
   promise: Promise<T>
 }
 
-export type AbortableTask<T> = Task<T | Error> & {
-  abortController: AbortController
-}
-
 export function spawnTask<T>(future: Future<T>): Task<T> {
   // Note: we want the event loop to stay while the Promise is running,
   // so a setInterval is used to keep it alive.
@@ -25,7 +21,7 @@ export function spawnTask<T>(future: Future<T>): Task<T> {
 
 export function spawnAbortableTask<T>(
   future: Future<T>
-): Result<AbortableTask<T>, Error> {
+): Result<[Task<T>, () => void], Error> {
   if (!globalThis.AbortController)
     return Result$Error(AbortableTaskError$Unsupported())
   const abortController = new AbortController()
@@ -47,13 +43,8 @@ export function spawnAbortableTask<T>(
         }
         resolve(null)
       })
-    }),
-    abortController
+    })
   }
 
-  return Result$Ok(task as AbortableTask<T>)
-}
-
-export function abortTask<T>(task: AbortableTask<T>): void {
-  task.abortController.abort()
+  return Result$Ok([task as Task<T>, () => abortController.abort()])
 }

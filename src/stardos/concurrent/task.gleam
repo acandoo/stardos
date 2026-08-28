@@ -1,8 +1,10 @@
 import stardos/concurrent/future.{type Future}
 
-pub type Task
+pub type Task(a)
 
-pub type AbortableTask
+pub type AbortableTask(a) {
+  AbortableTask(task: Task(a), abort: fn() -> Nil)
+}
 
 pub type AbortableTaskError {
   /// The environment does not support abortable tasks.
@@ -10,12 +12,18 @@ pub type AbortableTaskError {
 }
 
 @external(javascript, "./task_ffi.mjs", "spawnTask")
-pub fn spawn(future: Future(a)) -> Task
+pub fn spawn(future: Future(a)) -> Task(a)
 
-@external(javascript, "./task_ffi.mjs", "spawnAbortableTask")
 pub fn spawn_abortable(
   future: Future(a),
-) -> Result(AbortableTask, AbortableTaskError)
+) -> Result(AbortableTask(a), AbortableTaskError) {
+  case spawn_abortable_internal(future) {
+    Ok(#(task, abort)) -> Ok(AbortableTask(task:, abort:))
+    Error(Nil) -> Error(Unsupported)
+  }
+}
 
-@external(javascript, "./task_ffi.mjs", "abortTask")
-pub fn abort(task: AbortableTask) -> Nil
+@external(javascript, "./task_ffi.mjs", "spawnAbortableTask")
+fn spawn_abortable_internal(
+  future: Future(a),
+) -> Result(#(Task(a), fn() -> Nil), Nil)

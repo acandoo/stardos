@@ -12,6 +12,6 @@ pub fn task_spawn_test() -> Nil {
 pub fn task_abort_test() -> Nil {
   let f = future.new(fn() { 200 })
   let assert Ok(abortable_task) = task.spawn_abortable(f)
-  task.abort(abortable_task)
+  abortable_task.abort()
   Nil
 }
