@@ -40,6 +40,19 @@ export function awaitFuture<NewResult, PrevResult>(
   }
 }
 
+export function mapFuture<NewResult, PrevResult>(
+  future: Future<PrevResult>,
+  cb: (arg0: PrevResult) => NewResult
+): Future<NewResult> {
+  return {
+    execute: async () => {
+      const result = await future.execute()
+      return cb(result)
+    },
+    cleanup: future.cleanup
+  }
+}
+
 export function joinFutures<Result1, Result2>(
   future1: Future<Result1>,
   future2: Future<Result2>
