@@ -12,11 +12,7 @@
 //// model and the requirements of the Erlang and JavaScript runtimes.
 
 /// A Future represents an asynchronous operation that will
-/// eventually produce a result of type `result`. It may depend
-/// on the completion of a previous Future of type `prev`.
-///
-/// `prev` may be `Nil` if there is no dependency, another Future type, or a nested tuple
-/// structure of previous dependencies.
+/// eventually produce a result of type `result`.
 pub type Future(result)
 
 /// Creates a new Future that will execute the provided computation
@@ -49,8 +45,8 @@ pub fn new(compute: fn() -> result) -> Future(result)
 @external(javascript, "./future_ffi.mjs", "resolveFuture")
 pub fn resolve(input: result) -> Future(result)
 
-/// Subscribes to the completion of a Future, allowing further operations to be
-/// performed once the Future resolves.
+/// Creates a new Future given another Future as input.
+/// To execute a future, use a Task.
 ///  
 /// ## Examples
 /// 
@@ -77,11 +73,6 @@ pub fn resolve(input: result) -> Future(result)
 /// future.resolve(value + 1)
 /// // -> Future(Int)
 /// ```
-/// 
-/// Awaiting a Future multiple times will re-execute it each time:
-/// 
-/// ```gleam
-/// 
 ///
 @external(javascript, "./future_ffi.mjs", "awaitFuture")
 pub fn await(
@@ -133,6 +124,6 @@ pub fn all(futures: List(Future(result))) -> Future(List(result))
 pub fn race(futures: List(Future(result))) -> Future(result)
 
 /// Flattens a double nested Future into a single Future.
-/// This often occurs after multiple `await` calls.
+/// It is rare that you need this.
 @external(javascript, "./future_ffi.mjs", "flattenFuture")
 pub fn flatten(future: Future(Future(result))) -> Future(result)
