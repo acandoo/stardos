@@ -13,12 +13,21 @@
 
 /// A Future represents an asynchronous operation that will
 /// eventually produce a result of type `result`.
+/// 
+/// If using the JavaScript runtime, do NOT store a Promise or a thenable within a Future!
+/// Doing such may lead to undefined behavior in your application.
+/// 
 pub type Future(result)
 
 /// Creates a new Future that will execute the provided computation
 /// when the Future is spawned in a Task by a runtime. In all likelihood
 /// you shouldn't use this function directly, as the main utility of this
 /// function is to appease the type system in certain scenarios.
+/// 
+/// On the JavaScript runtime, when the future is executed,
+/// the callback will be scheduled on the microtask queue.
+/// Essentially, that means that when spawning a Task,
+/// the callback won't be immediately called.
 ///  
 /// ## Examples
 /// 
@@ -29,8 +38,7 @@ pub type Future(result)
 /// // -> Future(Nil)
 /// ```
 /// 
-/// Run a blocking computation in a Future (This does NOT make it
-/// non-blocking on JavaScript!):
+/// Run a blocking computation in a Future:
 /// 
 /// ```gleam
 /// future.new(fn() {

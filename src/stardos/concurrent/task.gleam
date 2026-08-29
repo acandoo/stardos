@@ -11,6 +11,9 @@ pub type AbortableTaskError {
   Unsupported
 }
 
+@external(javascript, "./task_ffi.mjs", "awaitTask")
+pub fn await(task: Task(a), then cb: fn(a) -> Future(b)) -> Future(b)
+
 @external(javascript, "./task_ffi.mjs", "spawnTask")
 pub fn spawn(future: Future(a)) -> Task(a)
 
