@@ -2,6 +2,14 @@ import { List } from 'gleam'
 
 export type Future<Result> = {
   execute: () => Promise<Result>
+  /**
+   * Only executes on cancellation!
+   * If you need cleanup to run at the end of success,
+   * ensure that cleanup logic is synchronous,
+   * does not have the ability to error, or
+   * is otherwise wrapped in a try-catch block so
+   * failure doesn't trigger a second cleanup.
+   */
   cleanup: (() => void) | undefined
 }
 
