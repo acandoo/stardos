@@ -89,6 +89,29 @@ pub fn await(
   then cb: fn(result) -> Future(new),
 ) -> Future(new)
 
+/// To be used internally to optimize operations.
+/// This is not exposed to users as it would lead to API confusion,
+/// and comes with minimal performance benefit.
+@external(javascript, "./future_ffi.mjs", "mapFuture")
+fn map(future: Future(a), map: fn(a) -> b) -> Future(b)
+
+/// Subscribes to the completion of a Future fulfilling with a Result.
+/// 
+/// TODO tests!
+pub fn try_await(
+  future prev: Future(Result(a, e)),
+  then cb: fn(a) -> Future(b),
+) -> Future(Result(b, e)) {
+  use result <- await(prev)
+  case result {
+    Ok(input) -> {
+      use final <- map(cb(input))
+      Ok(final)
+    }
+    Error(e) -> resolve(Error(e))
+  }
+}
+
 /// Joins two Futures, producing a new Future that resolves
 /// when both input Futures have resolved. When spawned, the inner
 /// futures will be executed concurrently, and the resulting Future
