@@ -130,7 +130,7 @@ pub fn join(
 pub fn all(futures: List(Future(result))) -> Future(List(result))
 
 @external(javascript, "./future_ffi.mjs", "firstFuture")
-pub fn first(futures: List(Future(result))) -> Future(result)
+pub fn race(futures: List(Future(result))) -> Future(result)
 
 /// Flattens a double nested Future into a single Future.
 /// This often occurs after multiple `await` calls.
