@@ -136,10 +136,9 @@ export function memoFuture<T>(future: Future<T>): Future<T> {
       )
     })
     signal?.addEventListener('abort', instanceAborter, { once: true })
-    return promise.then((val) => {
+    return promise.finally(() => {
       dependents--
       signal?.removeEventListener('abort', instanceAborter)
-      return val
     })
   }
 }
