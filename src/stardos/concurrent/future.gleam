@@ -155,7 +155,7 @@ pub fn select(
 /// If another Task is spawned, then it is re-executed from scratch.
 /// This ensures that application panics can be properly traced to tasks available in application code.
 /// 
-/// If 
+///
 /// 
 /// Whenever possible, it is more efficient to create a single Task
 /// with parallel control flow rather than using multiple Tasks relying on a memoized future.
