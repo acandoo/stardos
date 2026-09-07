@@ -1,48 +1,29 @@
-import {
-  to_milliseconds,
-  type empty as Duration
-} from 'gleam:@gleam_time/gleam/time/duration'
-import { type Future } from './concurrent/future_ffi'
-import {
-  Stream$First,
-  Stream$Continue,
-  type Stream$ as Stream
-} from 'gleam:@stardos/stardos/concurrent/stream'
+import { createFuture, type Future } from './concurrent/future_ffi'
+
+// For these two functions, we don't use the DOM API of passing in an AbortSignal
+// because it's not portable across all JS runtimes.
 
 export function timeoutMs(durationMs: number): Future<undefined> {
-  let timer: NodeJS.Timeout
-  return {
-    execute: () =>
-      new Promise((res) => {
-        timer = setTimeout(() => res(undefined), durationMs)
-      }),
-    cleanup: () => clearTimeout(timer)
-  }
+  let timer: ReturnType<typeof setTimeout> | undefined
+  return createFuture(
+    () =>
+      new Promise(
+        (res) =>
+          (timer = setTimeout(res, durationMs) as unknown as ReturnType<
+            typeof setTimeout
+          >)
+      ),
+    () => clearTimeout(timer)
+  )
 }
 
-export function interval(duration: typeof Duration): Stream<undefined> {
-  const durationMs = to_milliseconds(duration)
-  let timerCb: () => void
-  let intervalTimer: NodeJS.Timeout
-
-  const intervalLoop = () =>
-    Stream$Continue(undefined, {
-      execute: () =>
-        new Promise((res) => {
-          timerCb = () => {
-            res(intervalLoop())
-          }
-        })
-    })
-
-  return Stream$First({
-    execute: () =>
-      new Promise((res) => {
-        timerCb = () => {
-          res(intervalLoop())
-        }
-        intervalTimer = setInterval(() => timerCb(), durationMs)
-      }),
-    cleanup: () => clearInterval(intervalTimer)
-  })
+export function intervalMs(
+  durationMs: number,
+  callback: () => void
+): Future<undefined> {
+  let timer: ReturnType<typeof setInterval> | undefined
+  return createFuture(
+    () => new Promise(() => (timer = setInterval(callback, durationMs))),
+    () => clearInterval(timer)
+  )
 }

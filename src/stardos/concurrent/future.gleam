@@ -11,14 +11,30 @@
 //// This distinction is due to Gleam's fundamentally synchronous execution
 //// model and the requirements of the Erlang and JavaScript runtimes.
 
+import gleither.{type Either}
+
 /// A Future represents an asynchronous operation that will
 /// eventually produce a result of type `result`.
+/// 
+/// If using the JavaScript runtime, do NOT store a Promise or a thenable within a Future!
+/// Doing such may lead to undefined behavior in your application.
+/// 
 pub type Future(result)
+
+pub type AbortionError {
+  /// The task was prematurely aborted by the user.
+  Aborted
+}
 
 /// Creates a new Future that will execute the provided computation
 /// when the Future is spawned in a Task by a runtime. In all likelihood
 /// you shouldn't use this function directly, as the main utility of this
 /// function is to appease the type system in certain scenarios.
+/// 
+/// On the JavaScript runtime, when the future is executed,
+/// the callback will be scheduled on the microtask queue.
+/// Essentially, that means that when spawning a Task,
+/// the callback won't be immediately called.
 ///  
 /// ## Examples
 /// 
@@ -29,8 +45,7 @@ pub type Future(result)
 /// // -> Future(Nil)
 /// ```
 /// 
-/// Run a blocking computation in a Future (This does NOT make it
-/// non-blocking on JavaScript!):
+/// Run a blocking computation in a Future:
 /// 
 /// ```gleam
 /// future.new(fn() {
@@ -120,8 +135,32 @@ pub fn join(
 @external(javascript, "./future_ffi.mjs", "allFutures")
 pub fn all(futures: List(Future(result))) -> Future(List(result))
 
+/// Executes a list of futures concurrently and returns the first one.
 @external(javascript, "./future_ffi.mjs", "firstFuture")
 pub fn race(futures: List(Future(result))) -> Future(result)
+
+/// Executes two futures concurrently and returns the first one.
+@external(javascript, "./future_ffi.mjs", "selectFuture")
+pub fn select(
+  future1: Future(result1),
+  future2: Future(result2),
+) -> Future(Either(result1, result2))
+
+/// Memoizes a Future when used in multiple Tasks.
+/// This means that Tasks awaiting the resulting future
+/// will only ever execute that Future once, reusing the return value.
+/// 
+/// In the case that all Tasks are aborted while executing this memoized future,
+/// the future's execution is stopped silently.
+/// If another Task is spawned, then it is re-executed from scratch.
+/// This ensures that application panics can be properly traced to tasks available in application code.
+/// 
+/// If 
+/// 
+/// Whenever possible, it is more efficient to create a single Task
+/// with parallel control flow rather than using multiple Tasks relying on a memoized future.
+@external(javascript, "./future_ffi.mjs", "memoFuture")
+pub fn memo(future: Future(result)) -> Future(result)
 
 /// Flattens a double nested Future into a single Future.
 /// It is rare that you need this.
