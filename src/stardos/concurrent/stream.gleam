@@ -129,27 +129,29 @@ pub fn map(stream: Stream(a), with fun: fn(a) -> Future(b)) -> Stream(b) {
 ///   Nil
 /// }
 /// ```
-pub fn each(to stream: Stream(a), then cb: fn(a) -> Future(Nil)) -> Future(Nil) {
+pub fn each(stream: Stream(a), cb: fn(a) -> Future(Nil)) -> Future(Nil) {
   case stream {
     First(next_stream_future) -> {
       use next_stream <- future.await(next_stream_future)
-      each(to: next_stream, then: cb)
+      each(next_stream, cb)
     }
     Continue(value, next_stream_future) -> {
-      use _ <- future.await(cb(value))
-      use next_stream <- future.await(next_stream_future)
-      each(to: next_stream, then: cb)
+      use _ <- future_ext.map(future.join(
+        cb(value),
+        each_internal(next_stream_future, cb),
+      ))
+      Nil
     }
     EagerContinue(value_future, next_stream_future) -> {
       let value_run = {
         use value <- future.await(value_future)
         cb(value)
       }
-      use #(_, next_stream) <- future.await(future.join(
+      use _ <- future_ext.map(future.join(
         value_run,
-        next_stream_future,
+        each_internal(next_stream_future, cb),
       ))
-      each(to: next_stream, then: cb)
+      Nil
     }
     EagerMaybeContinue(value_option_future, next_stream_future) -> {
       let value_run = {
@@ -159,18 +161,23 @@ pub fn each(to stream: Stream(a), then cb: fn(a) -> Future(Nil)) -> Future(Nil) 
           None -> future.resolve(Nil)
         }
       }
-      use #(_, next_stream) <- future.await(future.join(
+      use _ <- future_ext.map(future.join(
         value_run,
-        next_stream_future,
+        each_internal(next_stream_future, cb),
       ))
-      each(to: next_stream, then: cb)
-    }
-    End -> future.resolve(Nil)
-    Last(value) -> {
-      use _ <- future_ext.map(cb(value))
       Nil
     }
+    End -> future.resolve(Nil)
+    Last(value) -> cb(value)
   }
+}
+
+fn each_internal(
+  stream_future: Future(Stream(a)),
+  cb: fn(a) -> Future(Nil),
+) -> Future(Nil) {
+  use stream <- future.await(stream_future)
+  each(stream, cb)
 }
 
 pub fn filter(
