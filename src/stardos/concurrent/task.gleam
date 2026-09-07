@@ -1,21 +1,31 @@
 import stardos/concurrent/future.{type Future}
 
-pub type Task
+pub type Task(a)
 
-pub type AbortableTask
-
-pub type AbortableTaskError {
-  /// The environment does not support abortable tasks.
-  Unsupported
+pub type AbortableTask(a) {
+  AbortableTask(task: Task(a), abort: fn() -> Nil)
 }
 
-@external(javascript, "./task_ffi.mjs", "spawnTask")
-pub fn spawn(future: Future(a)) -> Task
+pub type AbortableTaskError {
+  /// The task was prematurely aborted by the user.
+  Aborted
+}
 
-@external(javascript, "./task_ffi.mjs", "spawnAbortableTask")
+@external(javascript, "./task_ffi.mjs", "awaitTask")
+pub fn await(task: Task(a), then cb: fn(a) -> Future(b)) -> Future(b)
+
+@external(javascript, "./task_ffi.mjs", "spawnTask")
+pub fn spawn(future: Future(a)) -> Task(a)
+
 pub fn spawn_abortable(
   future: Future(a),
-) -> Result(AbortableTask, AbortableTaskError)
+) -> AbortableTask(Result(a, AbortableTaskError)) {
+  let #(task, abort) = spawn_abortable_internal(future, Aborted)
+  AbortableTask(task:, abort:)
+}
 
-@external(javascript, "./task_ffi.mjs", "abortTask")
-pub fn abort(task: AbortableTask) -> Nil
+@external(javascript, "./task_ffi.mjs", "spawnAbortableTask")
+fn spawn_abortable_internal(
+  future: Future(a),
+  error_object: AbortableTaskError,
+) -> #(Task(Result(a, AbortableTaskError)), fn() -> Nil)

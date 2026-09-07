@@ -57,7 +57,7 @@ pub fn future_all_test() -> Nil {
 // Test future.first returns the first completed future
 pub fn future_first_test() -> Nil {
   task.spawn(
-    future.first([
+    future.race([
       future.new(fn() { 1 }),
       future.new(fn() { 2 }),
       future.new(fn() { 3 }),

@@ -15,6 +15,7 @@
     "moduleResolution": "bundler",
     "module": "esnext",
     "target": "esnext",
+    "types": ["node", "bun", "deno"],
     "noEmit": true,
     "strict": true
   },

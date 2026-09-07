@@ -1,23 +1,24 @@
 name = "stardos"
 version = "0.0.0-development"
+gleam = ">= 1.13.0"
 
-# Fill out these fields if you intend to generate HTML documentation or publish
-# your project to the Hex package manager.
-#
-# description = ""
-# licences = ["Apache-2.0"]
-# repository = { type = "github", user = "", repo = "" }
-# links = [{ title = "Website", href = "" }]
-#
-# For a full reference of all the available options, you can have a look at
-# https://gleam.run/writing-gleam/gleam-toml/.
+description = "An integrated, concurrent, cross-runtime library for OS resources in Gleam!"
+repository = { type = "github", user = "acandoo", repo = "stardos" }
+licences = ["MIT"]
 
-# this is temporary for now, javascript is supported first
 target = "javascript"
+
+[documentation]
+pages = [
+  { title = "Contributing", path = "contributing.html", source = "./docs/CONTRIBUTING.md" },
+  { title = "Design rationale", path = "rationale.html", source = "./docs/RATIONALE.md" },
+  { title = "Concurrency", path = "concurrency.html", source = "./docs/CONCURRENCY.md" }
+]
 
 [dependencies]
 gleam_stdlib = ">= 0.67.1 and < 1.0.0"
 gleam_time = ">= 1.7.0 and < 2.0.0"
+gleither = ">= 2.2.1 and < 3.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

@@ -1,5 +1,7 @@
+import gleam/time/duration
 import stardos/concurrent/future
 import stardos/concurrent/task
+import stardos/timer
 
 // Test task spawning
 pub fn task_spawn_test() -> Nil {
@@ -10,8 +12,13 @@ pub fn task_spawn_test() -> Nil {
 
 // Test abortable task creation and abort
 pub fn task_abort_test() -> Nil {
-  let f = future.new(fn() { 200 })
-  let assert Ok(abortable_task) = task.spawn_abortable(f)
-  task.abort(abortable_task)
+  let f = timer.timeout(duration.seconds(5))
+  let abortable_task = task.spawn_abortable(f)
+  abortable_task.abort()
+  task.spawn({
+    use result <- task.await(abortable_task.task)
+    let assert Error(_) = result as "Task should have been aborted"
+    future.resolve(Nil)
+  })
   Nil
 }
