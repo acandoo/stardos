@@ -26,7 +26,7 @@ For various cases where the size of the stream will be known at once without con
 
 Erlang is more than just parallel processes, though; message passing is something that's not as easily replicable on JavaScript, and would likely use an async generator or similar.
 
-One of the main selling points of Gleam and OTP is the Actor framework, where actor state is pseudo-mutated and effects are spawned by messages passed to actors. This actor approach feels core to Gleam's identity, if it is to develop a core asynchronous primitive; so this library don't want to stray too far away in terms of the patterns promoted.
+One of the main selling points of Gleam and OTP is the Actor framework, where actor state is pseudo-mutated and effects are spawned by messages passed to actors. This actor approach feels core to Gleam's identity, if it is to develop a core asynchronous primitive; so this library doesn't stray too far away in terms of the patterns promoted.
 
 With the existing primitives created, an Actor can be replicated by combining a channel (which wraps a Stream) with a Task.
 
