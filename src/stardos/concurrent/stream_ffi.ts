@@ -28,9 +28,15 @@ export function capture<Value, Return>(
   let indexToBeGenerated = 0
   const ret = fun((value) => {
     values[indexToBeGenerated] = value
+    const index = indexToBeGenerated
     indexToBeGenerated++
-    for (const resolver of resolvers[indexToBeGenerated - 1]) {
-      resolver(Stream$Continue(value, () => getValue(indexToBeGenerated)))
+
+    const resolverList = resolvers[index]
+    if (resolverList) {
+      for (const resolver of resolverList) {
+        resolver(Stream$Continue(value, () => getValue(indexToBeGenerated)))
+      }
+      resolvers[index] = []
     }
   })
 
