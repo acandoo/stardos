@@ -10,10 +10,10 @@ import stardos/os
 
 pub type Runtime {
   Erlang(path: String)
-  JavaScript(runtime: JavaScriptRuntime)
+  Javascript(runtime: JavascriptRuntime)
 }
 
-pub type JavaScriptRuntime {
+pub type JavascriptRuntime {
   Node(path: String)
   Deno(path: String)
   Bun(path: String)

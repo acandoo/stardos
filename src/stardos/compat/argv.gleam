@@ -11,7 +11,7 @@ pub type Argv {
 pub fn load() -> Argv {
   let runtime = case env.runtime() {
     env.Erlang(path) -> path
-    env.JavaScript(js_runtime) ->
+    env.Javascript(js_runtime) ->
       case js_runtime {
         env.Node(path) -> path
         env.Deno(path) -> path
