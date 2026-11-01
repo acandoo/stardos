@@ -1,36 +1,36 @@
 import { List, List$Empty, Result$Error, Result$Ok, type Result } from 'gleam'
 import * as Dict from 'gleam:@gleam_stdlib/gleam/dict'
 import {
-  type JavaScript,
-  JavaScriptRuntime$Bun,
-  JavaScriptRuntime$Deno,
-  JavaScriptRuntime$Node,
-  JavaScriptRuntime$Unknown,
-  Runtime$JavaScript
+  type Javascript,
+  JavascriptRuntime$Bun,
+  JavascriptRuntime$Deno,
+  JavascriptRuntime$Node,
+  JavascriptRuntime$Unknown,
+  Runtime$Javascript
 } from 'gleam:@stardos/stardos/env'
 import { platform } from './os_ffi'
 // node:os is dynamically imported
 
-export function runtime(): JavaScript {
+export function runtime(): Javascript {
   if (globalThis.Bun) {
     const bunPath = process.execPath
-    return Runtime$JavaScript(JavaScriptRuntime$Bun(bunPath))
+    return Runtime$Javascript(JavascriptRuntime$Bun(bunPath))
   }
   if (globalThis.Deno) {
     const denoPath = Deno.execPath()
-    return Runtime$JavaScript(JavaScriptRuntime$Deno(denoPath))
+    return Runtime$Javascript(JavascriptRuntime$Deno(denoPath))
   }
 
   // Extra work is done to check for Node since other environments
   // (like Bun) also define `globalThis.process`.
   if (globalThis.process?.release?.name === 'node') {
     const nodePath = process.execPath
-    return Runtime$JavaScript(JavaScriptRuntime$Node(nodePath))
+    return Runtime$Javascript(JavascriptRuntime$Node(nodePath))
   }
 
   // Fallback for unknown JavaScript runtimes.
   // At the moment browser/worker/edge runtimes are not supported.
-  return Runtime$JavaScript(JavaScriptRuntime$Unknown)
+  return Runtime$Javascript(JavascriptRuntime$Unknown)
 }
 
 export function program(): string {
